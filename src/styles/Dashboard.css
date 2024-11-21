@@ -1,0 +1,54 @@
+/* styles/Dashboard.css */
+.dashboard {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+}
+
+.content {
+    padding: 20px;
+}
+
+.section {
+    margin: 20px 0;
+}
+
+.mesas-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.mesa-card {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 15px;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    margin: 5px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px #620375;
+    transition: background-color 0.3s ease;
+}
+
+.mesa-card p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Color de la mesa según el estado */
+.mesa-card.abierta {
+    background-color: #ff6600; /* Naranja para mesa abierta */
+}
+
+.mesa-card.cerrada {
+    background-color: #ffffff; /* Blanco para mesa cerrada */
+}
+
+/* Añadir un efecto al pasar el ratón */
+.mesa-card:hover {
+    opacity: 0.8;
+}

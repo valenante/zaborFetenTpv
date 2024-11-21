@@ -1,0 +1,75 @@
+/* Estilo general del modal */
+.MuiDialog-root {
+    font-family: 'Arial', sans-serif;
+}
+
+/* Título del modal */
+.MuiDialogTitle-root {
+    background-color: #6C3483;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    padding: 15px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin: 0;
+}
+
+/* Contenido del modal */
+.MuiDialogContent-root {
+    padding: 20px;
+}
+
+.MuiDialogContent-root label {
+    font-weight: bold;
+    color: #6C3483;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-control {
+    border: 1px solid #6C3483;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 16px;
+    width: 100px;
+    margin-top: 10px;
+}
+
+/* Checkbox */
+.MuiDialogContent-root input[type="checkbox"] {
+    margin-right: 10px;
+    accent-color: #6C3483; /* Color del checkbox */
+}
+
+.MuiDialogContent-root label input[type="checkbox"] + span {
+    color: #6C3483;
+}
+
+/* Botones */
+.MuiDialogActions-root {
+    padding: 15px;
+    justify-content: flex-end;
+}
+
+.MuiButton-root {
+    font-size: 16px;
+    padding: 8px 16px;
+    border: 1px solid #6C3483;
+    color: #6C3483;
+    background-color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.MuiButton-root:hover {
+    background-color: #6C3483;
+    color: white;
+}
+
+.MuiButton-root:first-child {
+    background-color: #f9f9f9;
+}
+
+.MuiButton-root:first-child:hover {
+    background-color: #ddd;
+}

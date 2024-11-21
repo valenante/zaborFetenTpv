@@ -1,0 +1,112 @@
+/* MesaDetail.css */
+.mesa-detail-container {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f3fc; /* Fondo morado suave */
+    color: #4a235a; /* Texto morado oscuro */
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 2rem auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mesa-title {
+    text-align: center;
+    color: #6c3483; /* Morado intermedio */
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.mesa-error {
+    color: red;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.mesa-orders {
+    margin-top: 2rem;
+}
+
+.orders-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #512e5f; /* Morado oscuro */
+}
+
+.pedido-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pedido-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pedido-status {
+    color: #4a235a;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.pedido-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.plato-item {
+    background-color: #f4ebf7; /* Fondo suave para platos */
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.plato-name {
+    font-size: 1.1rem;
+    color: #5b2c6f; /* Morado más fuerte */
+    margin-bottom: 0.5rem;
+}
+
+.plato-quantity, .plato-price {
+    color: #6c3483;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.pedido-total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a235a;
+    margin-top: 1rem;
+}
+
+.mesa-no-orders {
+    color: #7d3c98; /* Morado brillante */
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.eliminar-plato-btn {
+    background-color: #c0392b; /* Rojo vibrante */
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.eliminar-plato-btn:hover {
+    background-color: #e74c3c; /* Rojo más claro */
+}
+
+.eliminar-plato-btn:active {
+    background-color: #a93226; /* Rojo más oscuro */
+}

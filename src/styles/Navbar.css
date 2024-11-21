@@ -1,0 +1,22 @@
+/* Estilos del Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Logo y nombre de la app */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo .logo {
+    width: 60%;  /* Ajusta el tamaño del logo */
+    margin: 0 20px;
+}

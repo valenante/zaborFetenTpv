@@ -1,0 +1,43 @@
+/* Estilos del Navbar */
+.subnavbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(14, 12, 12, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Estilo para los enlaces de navegación */
+.nav-links {
+    list-style: none;
+    display: flex;
+    justify-content: center; /* Centra los elementos de la lista */
+    flex-grow: 1;  /* Asegura que ocupe el espacio disponible */
+}
+
+/* Estilo para los enlaces de navegación */
+.nav-links {
+    list-style: none;
+    display: flex;
+    justify-content: center; /* Centra los elementos de la lista */
+    flex-grow: 1;  /* Asegura que ocupe el espacio disponible */
+    gap: 20px;  /* Espaciado entre los enlaces */
+}
+
+.nav-links li {
+    display: inline-block; /* Asegura que los li no se estiren */
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #620375;
+    font-size: 22px;
+    transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+    color: #9b1e5f;  /* Un color más claro al hacer hover */
+}
