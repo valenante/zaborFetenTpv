@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import io from 'socket.io-client';  // Importar socket.io-client
 import '../styles/MesaDetail.css'; // Archivo de estilos
 import RightBar from '../component/RightBar';
+import BottomBar from '../component/BottomBar';
+import BebidaAcompanante from '../component/BebidaAcompanante';
+
+const socket = io('http://192.168.1.132:3000');  // Conectar con el servidor de Socket.io
+
 
 const MesaDetail = () => {
     const { numeroMesa } = useParams();
@@ -10,6 +16,7 @@ const MesaDetail = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        // Solicitar pedidos inicialmente al servidor
         fetch(`http://192.168.1.132:3000/api/pedidos/mesa/${numeroMesa}`)
             .then(response => response.json())
             .then(data => {
@@ -18,9 +25,7 @@ const MesaDetail = () => {
             .catch(err => {
                 setError(err.message || 'Error al obtener los pedidos');
             });
-    }, [numeroMesa]);
-
-    useEffect(() => {
+    
         fetch(`http://192.168.1.132:3000/api/pedidoBebidas/mesa/${numeroMesa}`)
             .then(response => response.json())
             .then(data => {
@@ -29,29 +34,45 @@ const MesaDetail = () => {
             .catch(err => {
                 setError(err.message || 'Error al obtener los pedidos');
             });
+    
+        // Escuchar el evento 'nuevoPedido' para pedidos nuevos
+        socket.on('nuevoPedido', (nuevoPedido) => {
+            // Verificar si el pedido pertenece a la mesa actual
+            if (nuevoPedido.mesa === parseInt(numeroMesa)) {
+                setPedidos((prevPedidos) => [...prevPedidos, nuevoPedido]);
+            }
+        });
+    
+        // Escuchar el evento 'nuevoPedido' para pedidos de bebida
+        socket.on('nuevoPedidoBebida', (nuevoPedidoBebida) => {
+            if (nuevoPedidoBebida.mesa === parseInt(numeroMesa)) {
+                setPedidosBebida((prevPedidosBebida) => [...prevPedidosBebida, nuevoPedidoBebida]);
+            }
+        });
+    
+        // Limpiar los eventos cuando el componente se desmonta
+        return () => {
+            socket.off('nuevoPedido');
+            socket.off('nuevoPedidoBebida');
+        };
     }, [numeroMesa]);
+    
+    
 
-    // Función para crear un nuevo pedido
-    const crearPedido = (pedido) => {
-        fetch(`http://192http://192.168.1.132:3000/api/pedidos/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ mesa: numeroMesa, ...pedido }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                setPedidos(prevPedidos => [...prevPedidos, data]);
-            })
-            .catch(err => {
-                setError(err.message || 'Error al crear el pedido');
-            });
-    };
+    // Configurar el socket para escuchar los nuevos pedidos
+    useEffect(() => {
+        socket.on('actualizarPedidos', (nuevoPedido) => {
+            // Aquí actualizamos el estado con el nuevo pedido
+            setPedidos(prevPedidos => [...prevPedidos, nuevoPedido]);
+        });
+
+        return () => {
+            socket.off('actualizarPedidos'); // Limpiar el evento cuando el componente se desmonte
+        };
+    }, []);
 
     // Función para eliminar un plato
     const eliminarPlato = (pedidoId, platoId) => {
-        console.log(platoId);
 
         // Realizando la solicitud DELETE
         fetch(`http://192.168.1.132:3000/api/pedidos/${pedidoId}/actualizar-plato/${platoId}`, {
@@ -61,12 +82,14 @@ const MesaDetail = () => {
             },
             body: JSON.stringify({ cantidad: 1 }) // Le indicamos al backend que queremos restar 1
         })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Respuesta del fetch:', response); // Esto te ayudará a ver la respuesta completa
+                return response.json();
+            })
             .then(data => {
                 setPedidos(prevPedidos =>
                     prevPedidos.map(pedido => {
                         if (pedido._id === pedidoId) {
-                            // Encontrar la bebida en el pedido
                             const updatedPlatos = pedido.platos.map(plato => {
                                 if (plato._id === platoId) {
                                     // Si la cantidad es mayor a 1, restamos 1
@@ -74,6 +97,7 @@ const MesaDetail = () => {
                                         return {
                                             ...plato,
                                             cantidad: plato.cantidad - 1, // Reducir la cantidad
+                                            tipo: plato.tipo,
                                         };
                                     } else {
                                         // Si la cantidad es 1, la eliminamos
@@ -98,7 +122,7 @@ const MesaDetail = () => {
                 );
             })
             .catch(err => {
-                setError(err.message || 'Error al actualizar la bebida');
+                setError(err.message || 'Error al actualizar el plato');
             });
     };
 
@@ -155,29 +179,35 @@ const MesaDetail = () => {
 
 
     return (
-        <div className="container-fluid text-center">
+        <div className="container-fluid text-center mt-3">
             <div className="row">
                 {/* Columna vacía (izquierda) */}
-                <div className="col-2 bg-light">
+                <div className="col-3">
                     {/* Puedes añadir algo aquí en el futuro o dejarlo vacío */}
                 </div>
 
                 {/* Columna central: Detalles de la Mesa */}
-                <div className="col-7">
+                <div className="col-5" id='pedidos-center'>
                     <div className="mesa-detail-container">
-                        <h1 className="mesa-title">Detalles de la Mesa {numeroMesa}</h1>
+                        <h1 className="mesa-title">Pedidos de la Mesa {numeroMesa}</h1>
                         {error && <p className="mesa-error text-danger">{error}</p>}
                         <div className="mesa-orders">
                             {/* Verificar si pedidos es un array */}
-                            {Array.isArray(pedidos) && pedidos.length > 0 ? (
-                                pedidos.map(pedido => (
-                                    pedido.platos.length > 0 && (
+                            {Array.isArray(pedidos) && pedidos.length > 0 && pedidos.some(pedido => pedido.platos?.length > 0) ? (
+                                pedidos
+                                    .filter(pedido => pedido.platos?.length > 0) // Filtrar pedidos con platos
+                                    .map(pedido => (
                                         <div className="pedido-card card mb-3" key={pedido._id}>
-                                            <h3 className="pedido-status">{pedido.estado} - Platos</h3>
+                                            <h3 className="pedido-status">{pedido.estado}</h3>
                                             <ul className="pedido-list list-group">
                                                 {pedido.platos.map(plato => (
-                                                    <li className="list-group-item d-flex justify-content-between align-items-center" key={plato.platoId}>
-                                                        <h4 className="plato-name">{plato.nombre} - {plato.cantidad}</h4>
+                                                    <li
+                                                        className="list-group-item d-flex justify-content-between align-items-center"
+                                                        key={plato.platoId}
+                                                    >
+                                                        <h4 className="plato-name">
+                                                            {plato.nombre} x{plato.cantidad}
+                                                        </h4>
                                                         <button
                                                             className="btn btn-danger btn-sm"
                                                             onClick={() => eliminarPlato(pedido._id, plato._id)}
@@ -188,22 +218,30 @@ const MesaDetail = () => {
                                                 ))}
                                             </ul>
                                         </div>
-                                    )
-                                ))
+                                    ))
                             ) : (
                                 <p>No hay platos disponibles.</p>
                             )}
 
                             {/* Verificar si pedidosBebida es un array */}
-                            {Array.isArray(pedidosBebida) && pedidosBebida.length > 0 ? (
-                                pedidosBebida.map(pedido => (
-                                    pedido.bebidas.length > 0 && (
+                            {Array.isArray(pedidosBebida) &&
+                                pedidosBebida.length > 0 &&
+                                pedidosBebida.some(pedido => pedido.bebidas?.length > 0) ? (
+                                pedidosBebida
+                                    .filter(pedido => pedido.bebidas?.length > 0) // Filtrar pedidos con bebidas
+                                    .map(pedido => (
                                         <div className="pedido-card card mb-3" key={pedido._id}>
-                                            <h3 className="pedido-status">{pedido.estado} - Bebidas</h3>
+                                            <h3 className="pedido-status">{pedido.estado}</h3>
                                             <ul className="pedido-list list-group">
                                                 {pedido.bebidas.map(bebida => (
-                                                    <li className="list-group-item d-flex justify-content-between align-items-center" key={bebida._id}>
-                                                        <h4 className="plato-name">{bebida.nombre} - {bebida.cantidad}</h4>
+                                                    <li
+                                                        className="list-group-item d-flex justify-content-between align-items-center"
+                                                        key={bebida._id}
+                                                    >
+                                                        <h4 className="plato-name">
+                                                            {bebida.nombre} x{bebida.cantidad}
+                                                        </h4>
+                                                        <BebidaAcompanante bebida={bebida} />
                                                         <button
                                                             className="btn btn-danger btn-sm"
                                                             onClick={() => eliminarBebida(pedido._id, bebida._id)}
@@ -214,21 +252,21 @@ const MesaDetail = () => {
                                                 ))}
                                             </ul>
                                         </div>
-                                    )
-                                ))
+                                    ))
                             ) : (
                                 <p>No hay bebidas disponibles.</p>
                             )}
+
                         </div>
                     </div>
                 </div>
 
                 {/* Columna derecha: RightBar */}
-                <div className="col-3 bg-light">
-                    <RightBar numeroMesa={numeroMesa} crearPedido={crearPedido} />
+                <div className="col-3">
+                    <RightBar />
                 </div>
-
             </div>
+            <BottomBar />
         </div>
     );
 };

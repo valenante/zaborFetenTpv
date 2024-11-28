@@ -1,0 +1,112 @@
+.secondary-subnavbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgb(155, 78, 1);
+}
+
+.secondary-subnavbar .btn {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.secondary-subnavbar .btn:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px; /* Ancho máximo */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    text-align: center;
+}
+
+/* Close Button */
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Title */
+.modal-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Loading Message */
+.loading-text {
+    font-size: 16px;
+    color: #555;
+}
+
+/* No Tables Message */
+.no-mesas {
+    font-style: italic;
+    color: #888;
+}
+
+/* Mesas List */
+.mesas-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Mesa Item */
+.mesa-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Recover Button */
+.recover-btn {
+    margin: 15px;
+    background-color: #512e5f;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover Effect for Recover Button */
+.recover-btn:hover {
+    background-color: #452452;
+}

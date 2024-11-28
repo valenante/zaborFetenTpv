@@ -1,6 +1,5 @@
 import React from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { useState } from 'react';
 
 const PlatoOptions = ({
   plato,
@@ -14,31 +13,43 @@ const PlatoOptions = ({
   handlePuntosDeCoccionChange,
   mostrarEspecificaciones,
   mostrarTamaño,
+  setTipoPlato,
 }) => {
-  return (
-    <>
-      {/* Show size options only if the dish is not "Surtido de Croquetas" */}
-      {mostrarTamaño && plato.nombre !== 'Surtido de Croquetas' && (plato.precios.tapa || plato.precios.racion || plato.precios.precio) && (
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Tamaño</InputLabel>
-          <Select
-            value={selectedSize}
-            onChange={(e) => setSelectedSize(e.target.value)}
-            label="Tamaño"
-          >
-            {plato.precios.precio !== null && plato.precios.precio !== undefined && (
-              <MenuItem value="precio">Precio - ${plato.precios.precio}</MenuItem>
-            )}
-            {plato.precios.tapa !== null && plato.precios.tapa !== undefined && (
-              <MenuItem value="tapa">Tapa - ${plato.precios.tapa}</MenuItem>
-            )}
-            {plato.precios.racion !== null && plato.precios.racion !== undefined && (
-              <MenuItem value="racion">Ración - ${plato.precios.racion}</MenuItem>
-            )}
-          </Select>
-        </FormControl>
-      )}
+  const handleSizeChange = (e) => {
+    const size = e.target.value;
+    setSelectedSize(size);
 
+    // Actualizar el tipo del plato según la opción seleccionada
+    if (size === 'precio') {
+      setTipoPlato('plato');
+    } else if (size === 'tapa') {
+      setTipoPlato('tapa');
+    } else if (size === 'racion') {
+      setTipoPlato('racion');
+    }
+
+  };
+
+  return (
+    <div style={{ width: '500px', height: '150px' }}>
+      {/* Show size options only if the dish is not "Surtido de Croquetas" */}
+      {mostrarTamaño &&
+        plato.nombre !== 'Surtido de Croquetas' &&
+        (plato.precios.tapa || plato.precios.racion || plato.precios.precio) && (
+          <FormControl fullWidth margin="normal">
+            <Select value={selectedSize} onChange={handleSizeChange} label="Seleccione tamaño">
+              {plato.precios.precio !== null && (
+                <MenuItem value="precio">Precio - ${plato.precios.precio}</MenuItem>
+              )}
+              {plato.precios.tapa !== null && (
+                <MenuItem value="tapa">Tapa - ${plato.precios.tapa}</MenuItem>
+              )}
+              {plato.precios.racion !== null && (
+                <MenuItem value="racion">Ración - ${plato.precios.racion}</MenuItem>
+              )}
+            </Select>
+          </FormControl>
+        )}
 
       {/* Show customizable options only if the dish is not "Surtido de Croquetas" */}
       {plato.nombre !== 'Surtido de Croquetas' && plato.opcionesPersonalizables?.length > 0 && plato.opcionesPersonalizables.map((opcion, index) => (
@@ -65,7 +76,6 @@ const PlatoOptions = ({
           <Select
             value={selectedPuntosDeCoccion}
             onChange={handlePuntosDeCoccionChange}
-            label="Punto de cocción"
           >
             {plato.puntosDeCoccion.map((nivel, index) => (
               <MenuItem key={index} value={nivel}>
@@ -93,7 +103,7 @@ const PlatoOptions = ({
           </Select>
         </FormControl>
       )}
-    </>
+    </div>
   );
 };
 

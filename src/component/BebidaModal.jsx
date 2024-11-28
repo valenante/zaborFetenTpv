@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/BebidaModal.css';
+import { Checkbox, FormControlLabel, MenuItem, Select } from '@mui/material';
 
 const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => {
     const [cantidad, setCantidad] = useState(1);
@@ -10,6 +11,9 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
     const [acompañante, setAcompañante] = useState('');
     const [bebidas, setBebidas] = useState(bebida);
     const { numeroMesa } = useParams();
+    const [refresco, setRefresco] = useState({ refrescoSeleccionado: '', tomarSolo: false });
+    const [refrescos, setRefrescos] = useState([]);  // Estado para almacenar los refrescos disponibles
+
 
     useEffect(() => {
         axios.get('http://192.168.1.132:3000/api/bebidas')
@@ -20,6 +24,30 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
                 console.error('Error fetching data:', error);
             });
     }, []);
+
+    // Cargar refrescos desde la base de datos
+  useEffect(() => {
+    const fetchRefrescos = async () => {
+      try {
+        const response = await fetch('http://192.168.1.132:3000/api/bebidas?categoria=refresco');
+        const data = await response.json();
+        setRefrescos(data);  // Asumiendo que la respuesta es un arreglo de refrescos
+      } catch (error) {
+        console.error("Error al obtener refrescos:", error);
+      }
+    };
+
+    fetchRefrescos();
+  }, []);
+
+    const handleTomarSoloChange = (event) => {
+        setRefresco({ ...refresco, tomarSolo: event.target.checked, refrescoSeleccionado: '' }); // Si toma solo, vacía el refresco
+      };
+
+    const handleRefrescoChange = (event) => {
+        setRefresco({ ...refresco, refrescoSeleccionado: event.target.value, tomarSolo: false }); // Actualiza el refresco
+      };
+    
 
     // Función para crear el pedido
     const handlePedir = async () => {
@@ -40,6 +68,7 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
                     cantidad,
                     precio: bebida.precio,
                     categoria: bebida.categoria,
+                    acompañante: refresco.tomarSolo ? 'Solo' : refresco.refrescoSeleccionado,  // Si toma solo, no asigna refresco
                 },
             ],
             total: precioTotal, // Asegúrate de que el total sea un número válido
@@ -72,6 +101,34 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
         <Dialog open={isModalOpen} onClose={handleCloseModal}>
             <DialogTitle>{bebida.nombre}</DialogTitle>
             <DialogContent>
+                <div>{bebida.descripcion}</div>
+
+                {/* Selección de refresco o "Tomar solo" */}
+                {['ron', 'whisky', 'vodka', 'ginebra', 'licor'].includes(bebida.categoria) && (
+                    <>
+                        <FormControlLabel
+                            control={<Checkbox checked={refresco.tomarSolo} onChange={handleTomarSoloChange} />}
+                            label="Tomar solo"
+                        />
+                        {!refresco.tomarSolo && (
+                            <Select
+                                value={refresco.refrescoSeleccionado}
+                                onChange={handleRefrescoChange}
+                                fullWidth
+                                displayEmpty
+                            >
+                                <MenuItem value="" disabled>
+                                    Selecciona un refresco
+                                </MenuItem>
+                                {refrescos.map((refresco, index) => (
+                                    <MenuItem key={index} value={refresco._id}>
+                                        {refresco.nombre}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        )}
+                    </>
+                )}
                 <label>Cantidad:</label>
                 <input
                     type="number"

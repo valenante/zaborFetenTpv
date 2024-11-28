@@ -1,0 +1,98 @@
+/* Cocina Styles */
+.cocina-container {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px 100px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cocina-title {
+    color: #620375;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.cocina-subtitle {
+    color: #620375;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.cocina-toggle-btn {
+    background-color: #620375;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.cocina-empty {
+    color: #888;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.cocina-list {
+    margin-top: 15px;
+}
+
+.cocina-pedido {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 5px;
+    justify-content: space-between;
+    height: fit-content;
+    align-items: center;
+}
+
+.cocina-time {
+    color: #620375;
+    font-weight: bold;
+}
+
+.cocina-mesa {
+    color: #333;
+    font-weight: bold;
+}
+
+.cocina-plato {
+    color: #4b0753;
+    margin: 0;
+}
+
+.cocina-ingredientes {
+    color: #666;
+    font-style: italic;
+}
+
+.cocina-tipo {
+    color: #888;
+}
+
+.cocina-opciones {
+    color: #444;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0;
+}
+
+.cocina-opciones li {
+    margin-bottom: 5px;
+}
+
+.cocina-btn-terminado {
+    background-color: rgb(140,12,12);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.cocina-btn-terminado:hover {
+    background-color: rgb(121, 8, 8);
+    color:#fff;
+}

@@ -1,5 +1,6 @@
 .plato-modal {
     font-family: 'Arial', sans-serif;
+    width: 500px;
 }
 
 .plato-modal-title {
@@ -68,10 +69,6 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: #6C3483;
-    color: white;
-}
 
 .dialog-actions button {
     color: #6C3483;

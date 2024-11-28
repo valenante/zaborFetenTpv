@@ -5,24 +5,46 @@ import SurtidoCroquetasForm from './SurtidoDeCroquetasForm';
 import { useParams } from 'react-router-dom';
 import '../styles/PlatoModal.css';
 
-const PlatoModal = ({ isModalOpen, handleCloseModal, plato, handleAddToCart, actualizarPedidos }) => {
+const PlatoModal = ({ isModalOpen, handleCloseModal, plato }) => {
   const [cantidad, setCantidad] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null); // Default "tapa"
+  const [tipoPlato, setTipoPlato] = useState('tapa');
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedEspecificacion, setSelectedEspecificacion] = useState(null);
-  const [selectedPuntosDeCoccion, setSelectedPuntosDeCoccion] = useState(null);
+  const [selectedPuntosDeCoccion, setSelectedPuntosDeCoccion] = useState(
+    plato.puntosDeCoccion?.[0] || '' // Usa el primer valor del array, o una cadena vacía si no hay opciones
+  );  
   const [selectedCroquetas, setSelectedCroquetas] = useState([]);
   const [ingredientes, setIngredientes] = useState(plato.ingredientes);
   const [precio, setPrecio] = useState(0);
-
   const { numeroMesa } = useParams();
 
+  // Configurar el valor predeterminado según los precios del plato
   useEffect(() => {
-    if (!plato.precios.tapa && !plato.precios.racion) {
-      setPrecio(plato.precios.precio);
+    if (plato.precios.tapa !== null) {
+      setSelectedSize('tapa');
+      setTipoPlato('tapa');
+    } else if (plato.precios.racion !== null) {
+      setSelectedSize('racion');
+      setTipoPlato('racion');
+    } else if (plato.precios.precio !== null) {
       setSelectedSize('precio');
+      setTipoPlato('plato');
     }
-  }, [plato.precios]);
+  }, [plato, setTipoPlato]);
+
+  const handleSizeChange = (e) => {
+    const size = e.target.value;
+    setSelectedSize(size);
+
+    if (size === 'precio') {
+      setTipoPlato('plato');
+    } else if (size === 'tapa') {
+      setTipoPlato('tapa');
+    } else if (size === 'racion') {
+      setTipoPlato('racion');
+    }
+  };
 
   const handleCantidadChange = (e) => {
     const value = Math.min(Math.max(e.target.value, 1), 10);
@@ -42,25 +64,36 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato, handleAddToCart, act
     setIngredientes((prevIngredientes) => prevIngredientes.filter((ingrediente) => ingrediente !== ingredientToRemove));
   };
 
+  const handlePuntosDeCoccionChange = (event) => {
+    setSelectedPuntosDeCoccion(event.target.value);
+  };  
+
   // Función para crear el pedido
   const handlePedir = async () => {
     let selectedPrice = 0;
-
-    if (selectedSize === 'tapa' && plato.precios.tapa) {
+  
+    // Verificar que el valor de tipoPlato sea uno de los valores válidos
+    const tiposValidos = ['plato', 'tapa', 'racion'];
+    if (!tiposValidos.includes(plato.tipo)) {
+      alert('El tipo del plato no es válido.');
+      return;
+    }
+  
+    // Determinar el precio basado en el tipo y el tamaño seleccionado
+    if (tipoPlato === 'tapa' && plato.precios.tapa) {
       selectedPrice = plato.precios.tapa;
-    } else if (selectedSize === 'racion' && plato.precios.racion) {
+    } else if (tipoPlato === 'racion' && plato.precios.racion) {
       selectedPrice = plato.precios.racion;
     } else {
       selectedPrice = plato.precios.precio;
     }
-
-    console.log(selectedSize)
-
+  
+    console.log(selectedSize);
+  
     // Calcular el total del pedido basado en el precio y la cantidad
     let precioTotal = selectedPrice * cantidad; // Precio base por la cantidad
-    
-    
-    // Verifica si el precio total es un número
+  
+    // Verifica si el precio total es un número válido
     if (isNaN(precioTotal) || precioTotal <= 0) {
       alert('El precio total no es válido');
       return;
@@ -80,6 +113,7 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato, handleAddToCart, act
           croquetas: selectedCroquetas,
           ingredientes,
           precios: selectedPrice,
+          tipo: tipoPlato,
         },
       ],
       total: precioTotal, // Asegúrate de que el total sea un número válido
@@ -116,7 +150,7 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato, handleAddToCart, act
       <DialogContent>
         {plato.ingredientes?.length > 0 && (
           <>
-            <h4 className="plato-ingredients-title">Ingredientes:</h4>
+            <h4 className="plato-ingredients-title mt-3">Ingredientes:</h4>
             <ul className="list-unstyled">
               {ingredientes.map((ingrediente, index) => (
                 <li key={index} className="d-flex justify-content-between align-items-center mb-2">
@@ -137,11 +171,13 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato, handleAddToCart, act
           selectedSize={selectedSize}
           setSelectedSize={setSelectedSize}
           selectedOptions={selectedOptions}
+          handleSizeChange={handleSizeChange}
           handleOptionChange={handleOptionChange}
           selectedEspecificacion={selectedEspecificacion}
           handleEspecificacionChange={setSelectedEspecificacion}
-          selectedPuntosDeCoccion={selectedPuntosDeCoccion}
+          selectedPuntosDeCoccion={handlePuntosDeCoccionChange}
           handlePuntosDeCoccionChange={setSelectedPuntosDeCoccion}
+          setTipoPlato={setTipoPlato} // Pasamos la función para actualizar tipoPlato
         />
 
         {plato.nombre === 'Surtido de Croquetas' && (

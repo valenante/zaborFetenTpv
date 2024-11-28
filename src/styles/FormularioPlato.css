@@ -1,0 +1,115 @@
+/* Contenedor del formulario */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid #6c3483;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del formulario */
+.form-title {
+    color: #6c3483;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+/* Contenedor de cada campo */
+.form-field {
+    width: 100%;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Etiquetas */
+.form-label {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* Inputs */
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    border-color: #6c3483;
+}
+
+/* Textarea */
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Botones */
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.form-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-button-bebida {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    width: 50%;
+    height: 20%;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-textarea{
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.save-button-bebida {
+    background-color: #6c3483;
+    color: #fff;
+    width: 50%;
+    height: 10%;
+}
+
+.save-button {
+    background-color: #6c3483;
+    color: #fff;
+}
+
+.save-button:hover {
+    background-color: #5a2b6b;
+}
+
+.cancel-button {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.cancel-button:hover {
+    background-color: #d32f2f;
+}

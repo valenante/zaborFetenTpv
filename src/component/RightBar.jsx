@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import BebidaModal from './BebidaModal';
 
-const RightBar = ({ numeroMesa, actualizarPedidos }) => {
+const RightBar = () => {
     const [activo, setActivo] = useState('comidas'); // Puede ser 'comidas' o 'bebidas'
     const [categorias, setCategorias] = useState([]);
     const [elementos, setElementos] = useState([]);
@@ -16,6 +16,7 @@ const RightBar = ({ numeroMesa, actualizarPedidos }) => {
     const [bebidaSeleccionada, setBebidaSeleccionada] = useState([]);
     const [bebidas, setBebidas] = useState([]); // Bebidas seleccionadas
     const [platos, setPlatos] = useState([]); // Platos seleccionados
+
     const elementosConTipo = elementos.map((elemento) => {
         if (elemento.precios || elemento.opcionesPersonalizables || elemento.puntosDeCoccion) {
             return { ...elemento, tipo: 'plato' }; // Es un plato
@@ -99,6 +100,7 @@ const RightBar = ({ numeroMesa, actualizarPedidos }) => {
             puntosDeCoccion: plato.puntosDeCoccion,
             especificaciones: plato.especificacion,
             precios: plato.precio ? [plato.precio] : [],
+            tipo: plato.tipo,
         }));
 
         const bebidasParaEnviar = bebidas.map(bebida => ({

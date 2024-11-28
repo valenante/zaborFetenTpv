@@ -2,10 +2,10 @@
     background-color: #f5f5f5;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: auto;
+    box-shadow: #6C3483 2px 2px 10px;
+    margin: 6rem auto;
     font-family: 'Arial', sans-serif;
+    margin-right: 30px;
 }
 
 .right-bar-header {
@@ -23,7 +23,7 @@
     background-color: #e8e8e8;
     color: #6C3483;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
@@ -55,8 +55,7 @@
     border-radius: 5px;
     background-color: #f9f9f9;
     color: #6C3483;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
 }

@@ -3,11 +3,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(14, 12, 12, 0.2);
+    background-color: rgba(204, 102, 0, 1);
+    padding-bottom: 10px;
     position: sticky;
     top: 0;
-    z-index: 100;
 }
 
 /* Estilo para los enlaces de navegación */
@@ -29,15 +28,12 @@
 
 .nav-links li {
     display: inline-block; /* Asegura que los li no se estiren */
+    margin-top: 10px;
 }
 
 .nav-links li a {
     text-decoration: none;
-    color: #620375;
+    color: white;
     font-size: 22px;
     transition: color 0.3s ease;
-}
-
-.nav-links li a:hover {
-    color: #9b1e5f;  /* Un color más claro al hacer hover */
 }
