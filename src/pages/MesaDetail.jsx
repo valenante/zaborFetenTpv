@@ -10,14 +10,14 @@ const socket = io('http://192.168.1.132:3000');  // Conectar con el servidor de 
 
 
 const MesaDetail = () => {
-    const { numeroMesa } = useParams();
+    const { id } = useParams();
     const [pedidos, setPedidos] = useState([]);
     const [pedidosBebida, setPedidosBebida] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         // Solicitar pedidos inicialmente al servidor
-        fetch(`http://192.168.1.132:3000/api/pedidos/mesa/${numeroMesa}`)
+        fetch(`http://192.168.1.132:3000/api/pedidos/mesa/${id}`)
             .then(response => response.json())
             .then(data => {
                 setPedidos(data);
@@ -25,8 +25,8 @@ const MesaDetail = () => {
             .catch(err => {
                 setError(err.message || 'Error al obtener los pedidos');
             });
-    
-        fetch(`http://192.168.1.132:3000/api/pedidoBebidas/mesa/${numeroMesa}`)
+
+        fetch(`http://192.168.1.132:3000/api/pedidoBebidas/mesa/${id}`)
             .then(response => response.json())
             .then(data => {
                 setPedidosBebida(data);
@@ -34,30 +34,33 @@ const MesaDetail = () => {
             .catch(err => {
                 setError(err.message || 'Error al obtener los pedidos');
             });
-    
+
         // Escuchar el evento 'nuevoPedido' para pedidos nuevos
         socket.on('nuevoPedido', (nuevoPedido) => {
-            // Verificar si el pedido pertenece a la mesa actual
-            if (nuevoPedido.mesa === parseInt(numeroMesa)) {
                 setPedidos((prevPedidos) => [...prevPedidos, nuevoPedido]);
-            }
         });
-    
+
         // Escuchar el evento 'nuevoPedido' para pedidos de bebida
         socket.on('nuevoPedidoBebida', (nuevoPedidoBebida) => {
-            if (nuevoPedidoBebida.mesa === parseInt(numeroMesa)) {
+            if (nuevoPedidoBebida.mesa === parseInt(id)) {
                 setPedidosBebida((prevPedidosBebida) => [...prevPedidosBebida, nuevoPedidoBebida]);
             }
         });
-    
+
+        // Escuchar el evento 'mesaRecuperada' emitido desde el servidor
+        socket.on('mesarecuperada', (data) => {
+            console.log('Mesa recuperada:', data);
+        });
+
         // Limpiar los eventos cuando el componente se desmonta
         return () => {
             socket.off('nuevoPedido');
             socket.off('nuevoPedidoBebida');
+            socket.off('mesarecuperada');
         };
-    }, [numeroMesa]);
-    
-    
+    }, [id]);
+
+
 
     // Configurar el socket para escuchar los nuevos pedidos
     useEffect(() => {
@@ -73,7 +76,6 @@ const MesaDetail = () => {
 
     // Función para eliminar un plato
     const eliminarPlato = (pedidoId, platoId) => {
-
         // Realizando la solicitud DELETE
         fetch(`http://192.168.1.132:3000/api/pedidos/${pedidoId}/actualizar-plato/${platoId}`, {
             method: 'PUT',
@@ -82,52 +84,56 @@ const MesaDetail = () => {
             },
             body: JSON.stringify({ cantidad: 1 }) // Le indicamos al backend que queremos restar 1
         })
-            .then(response => {
-                console.log('Respuesta del fetch:', response); // Esto te ayudará a ver la respuesta completa
-                return response.json();
-            })
-            .then(data => {
-                setPedidos(prevPedidos =>
-                    prevPedidos.map(pedido => {
-                        if (pedido._id === pedidoId) {
-                            const updatedPlatos = pedido.platos.map(plato => {
-                                if (plato._id === platoId) {
-                                    // Si la cantidad es mayor a 1, restamos 1
-                                    if (plato.cantidad > 1) {
-                                        return {
-                                            ...plato,
-                                            cantidad: plato.cantidad - 1, // Reducir la cantidad
-                                            tipo: plato.tipo,
-                                        };
-                                    } else {
-                                        // Si la cantidad es 1, la eliminamos
-                                        return null;
-                                    }
+        .then(response => {
+            console.log('Respuesta del fetch:', response); // Esto te ayudará a ver la respuesta completa
+            return response.json();
+        })
+        .then(data => {
+            setPedidos(prevPedidos =>
+                prevPedidos.map(pedido => {
+                    if (pedido._id === pedidoId) {
+                        const updatedPlatos = pedido.platos.map(plato => {
+                            if (plato._id === platoId) {
+                                // Si la cantidad es mayor a 1, restamos 1
+                                if (plato.cantidad > 1) {
+                                    return {
+                                        ...plato,
+                                        cantidad: plato.cantidad - 1, // Reducir la cantidad
+                                        tipo: plato.tipo,
+                                    };
+                                } else {
+                                    // Si la cantidad es 1, la eliminamos
+                                    return null;
                                 }
-                                return plato;
-                            }).filter(plato => plato !== null); // Filtrar las bebidas eliminadas
-
-                            // Eliminar el pedido si no tiene platos ni bebidas
-                            if (updatedPlatos.length === 0) {
-                                return null; // Eliminar el pedido
                             }
-
-                            return {
-                                ...pedido,
-                                bebidas: updatedPlatos,
-                            };
+                            return plato;
+                        }).filter(plato => plato !== null); // Filtrar los platos eliminados
+    
+                        // Eliminar el pedido si no tiene platos ni bebidas
+                        if (updatedPlatos.length === 0) {
+                            return null; // Eliminar el pedido
                         }
-                        return pedido;
-                    }).filter(pedido => pedido !== null) // Eliminar pedidos vacíos
-                );
-            })
-            .catch(err => {
-                setError(err.message || 'Error al actualizar el plato');
-            });
+    
+                        return {
+                            ...pedido,
+                            platos: updatedPlatos,  // Actualizamos la lista de platos
+                        };
+                    }
+                    return pedido;
+                }).filter(pedido => pedido !== null) // Eliminar pedidos vacíos
+            );
+    
+            // Recargar la página después de actualizar los pedidos
+            window.location.reload();
+        })
+        .catch(err => {
+            setError(err.message || 'Error al actualizar el plato');
+        });
     };
+    
 
     const eliminarBebida = (pedidoId, bebidaId) => {
-        // Hacer una solicitud PATCH para actualizar la cantidad de la bebida
+        // Hacer una solicitud PUT para actualizar la cantidad de la bebida
         fetch(`http://192.168.1.132:3000/api/pedidoBebidas/${pedidoId}/actualizar-bebida/${bebidaId}`, {
             method: 'PUT',
             headers: {
@@ -135,46 +141,50 @@ const MesaDetail = () => {
             },
             body: JSON.stringify({ cantidad: 1 }) // Le indicamos al backend que queremos restar 1
         })
-            .then(response => response.json())
-            .then(data => {
-                setPedidosBebida(prevPedidosBebida =>
-                    prevPedidosBebida.map(pedido => {
-                        if (pedido._id === pedidoId) {
-                            // Encontrar la bebida en el pedido
-                            const updatedBebidas = pedido.bebidas.map(bebida => {
-                                if (bebida._id === bebidaId) {
-                                    // Si la cantidad es mayor a 1, restamos 1
-                                    if (bebida.cantidad > 1) {
-                                        return {
-                                            ...bebida,
-                                            cantidad: bebida.cantidad - 1, // Reducir la cantidad
-                                        };
-                                    } else {
-                                        // Si la cantidad es 1, la eliminamos
-                                        return null;
-                                    }
+        .then(response => response.json())
+        .then(data => {
+            setPedidosBebida(prevPedidosBebida =>
+                prevPedidosBebida.map(pedido => {
+                    if (pedido._id === pedidoId) {
+                        // Encontrar la bebida en el pedido
+                        const updatedBebidas = pedido.bebidas.map(bebida => {
+                            if (bebida._id === bebidaId) {
+                                // Si la cantidad es mayor a 1, restamos 1
+                                if (bebida.cantidad > 1) {
+                                    return {
+                                        ...bebida,
+                                        cantidad: bebida.cantidad - 1, // Reducir la cantidad
+                                    };
+                                } else {
+                                    // Si la cantidad es 1, la eliminamos
+                                    return null;
                                 }
-                                return bebida;
-                            }).filter(bebida => bebida !== null); // Filtrar las bebidas eliminadas
-
-                            // Eliminar el pedido si no tiene platos ni bebidas
-                            if (updatedBebidas.length === 0) {
-                                return null; // Eliminar el pedido
                             }
-
-                            return {
-                                ...pedido,
-                                bebidas: updatedBebidas,
-                            };
+                            return bebida;
+                        }).filter(bebida => bebida !== null); // Filtrar las bebidas eliminadas
+    
+                        // Eliminar el pedido si no tiene platos ni bebidas
+                        if (updatedBebidas.length === 0) {
+                            return null; // Eliminar el pedido
                         }
-                        return pedido;
-                    }).filter(pedido => pedido !== null) // Eliminar pedidos vacíos
-                );
-            })
-            .catch(err => {
-                setError(err.message || 'Error al actualizar la bebida');
-            });
+    
+                        return {
+                            ...pedido,
+                            bebidas: updatedBebidas,  // Actualizamos la lista de bebidas
+                        };
+                    }
+                    return pedido;
+                }).filter(pedido => pedido !== null) // Eliminar pedidos vacíos
+            );
+    
+            // Recargar la página después de actualizar los pedidos
+            window.location.reload();
+        })
+        .catch(err => {
+            setError(err.message || 'Error al actualizar la bebida');
+        });
     };
+    
 
 
 
@@ -187,9 +197,9 @@ const MesaDetail = () => {
                 </div>
 
                 {/* Columna central: Detalles de la Mesa */}
-                <div className="col-5" id='pedidos-center'>
+                <div className="col-5" id="pedidos-center">
                     <div className="mesa-detail-container">
-                        <h1 className="mesa-title">Pedidos de la Mesa {numeroMesa}</h1>
+                        <h1 className="mesa-title">Pedidos de la Mesa {id}</h1>
                         {error && <p className="mesa-error text-danger">{error}</p>}
                         <div className="mesa-orders">
                             {/* Verificar si pedidos es un array */}
@@ -205,7 +215,10 @@ const MesaDetail = () => {
                                                         className="list-group-item d-flex justify-content-between align-items-center"
                                                         key={plato.platoId}
                                                     >
-                                                        <h4 className="plato-name">
+                                                        {/* Agregar clase condicional basada en estadoPreparacion */}
+                                                        <h4
+                                                            className={`plato-name ${plato.estadoPreparacion === 'listo' ? 'text-green' : plato.estadoPreparacion === 'pendiente' ? 'text-red' : ''}`}
+                                                        >
                                                             {plato.nombre} x{plato.cantidad}
                                                         </h4>
                                                         <button
@@ -256,7 +269,6 @@ const MesaDetail = () => {
                             ) : (
                                 <p>No hay bebidas disponibles.</p>
                             )}
-
                         </div>
                     </div>
                 </div>
@@ -266,7 +278,7 @@ const MesaDetail = () => {
                     <RightBar />
                 </div>
             </div>
-            <BottomBar />
+            <BottomBar/>
         </div>
     );
 };

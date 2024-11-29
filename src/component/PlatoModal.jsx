@@ -16,8 +16,9 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato }) => {
   );  
   const [selectedCroquetas, setSelectedCroquetas] = useState([]);
   const [ingredientes, setIngredientes] = useState(plato.ingredientes);
+  const [selectedTipoServicio, setSelectedTipoServicio] = useState('compartir');
   const [precio, setPrecio] = useState(0);
-  const { numeroMesa } = useParams();
+  const { id } = useParams();
 
   // Configurar el valor predeterminado según los precios del plato
   useEffect(() => {
@@ -68,6 +69,11 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato }) => {
     setSelectedPuntosDeCoccion(event.target.value);
   };  
 
+  const handleTipoServicioChange = (e) => {
+    setSelectedTipoServicio(e.target.value);
+  };
+
+
   // Función para crear el pedido
   const handlePedir = async () => {
     let selectedPrice = 0;
@@ -100,7 +106,7 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato }) => {
     }
   
     const pedidoData = {
-        mesa: numeroMesa,
+        mesa: id,
       platos: [
         {
           platoId: plato._id,
@@ -114,6 +120,7 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato }) => {
           ingredientes,
           precios: selectedPrice,
           tipo: tipoPlato,
+          tipoServicio: selectedTipoServicio,
         },
       ],
       total: precioTotal, // Asegúrate de que el total sea un número válido
@@ -197,6 +204,20 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato }) => {
             style={{ width: '100px', marginTop: '10px' }}
           />
         </div>
+        <div className="col-6">
+                <label htmlFor="servingStyle">Para:</label>
+                <select
+                  id="servingStyle"
+                  value={selectedTipoServicio}
+                  onChange={handleTipoServicioChange}
+                  className="form-control"
+                  style={{ marginTop: '10px' }}
+                >
+                  <option value="compartir">Compartir</option>
+                  <option value="individual">Individual</option>
+                </select>
+          </div>
+        
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseModal}>Cancelar</Button>

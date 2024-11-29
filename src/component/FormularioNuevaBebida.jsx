@@ -79,7 +79,7 @@ const FormularioNuevaBebida = ({ cerrarModal, setBebidas }) => {
 
             const data = await response.json();
             if (response.ok) {
-                setBebidas((prevBebidas) => [...prevBebidas, data]); // Agregar la nueva bebida al estado
+                setBebidas((prevBebidas) => [...prevBebidas, data]);
                 cerrarModal(); // Cierra el modal
             } else {
                 alert('Error al crear la bebida: ' + data.error);

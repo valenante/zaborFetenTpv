@@ -34,7 +34,7 @@ function App() {
           element={<PrivateRoute element={<Bebidas />} roles={['admin']} />}
         />
         <Route
-          path="/mesas/:numeroMesa"
+          path="/mesas/:id"
           element={<PrivateRoute element={<MesaDetail />} roles={['admin', 'waiter']} />}
         />
         <Route

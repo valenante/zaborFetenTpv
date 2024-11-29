@@ -6,10 +6,10 @@ import '../styles/Cocina.css';
 const Cocina = () => {
     const [pedidos, setPedidos] = useState([]);
     const [mostrarTerminados, setMostrarTerminados] = useState(false);
+    const socket = io('http://192.168.1.132:3000'); // Cambia la URL si es necesario
 
     useEffect(() => {
-        const socket = io('http://192.168.1.132:3000'); // Cambia la URL si es necesario
-
+        // Suscribirse a los eventos del socket
         socket.on('nuevoPedido', (pedido) => {
             setPedidos((prevPedidos) => [...prevPedidos, pedido]);
         });
@@ -22,153 +22,324 @@ const Cocina = () => {
             );
         });
 
+        socket.on('pedidoActualizado', (pedidoActualizado) => {
+            setPedidos((prevPedidos) =>
+                prevPedidos.map((pedido) =>
+                    pedido.id === pedidoActualizado.platoId
+                        ? {
+                            ...pedido,
+                            platos: pedido.platos.map((plato) =>
+                                plato.id === pedidoActualizado.platosid
+                                    ? {
+                                        ...plato,
+                                        estadoPreparacion: pedidoActualizado.estadoPreparacion // Solo actualiza el estado del plato
+                                    }
+                                    : plato
+                            )
+                        }
+                        : pedido
+                )
+            );
+        });
+
+        socket.on('pedidoFinalizado', (pedidoActualizado) => {
+            // Actualizar el estado local de los pedidos cuando se recibe el evento
+            setPedidos((prevPedidos) =>
+                prevPedidos.map((pedido) =>
+                    pedido.id === pedidoActualizado.id
+                        ? { ...pedido, estado: 'completado' } // Actualizar el estado a 'completado'
+                        : pedido
+                )
+            );
+        });
+
+        // Limpiar la conexión del socket cuando el componente se desmonta
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, []); // El array vacío asegura que este useEffect solo se ejecute una vez al montar el componente
 
-    useEffect(() => {
-        axios
-            .get('http://192.168.1.132:3000/api/pedidos')
-            .then((response) => setPedidos(response.data))
-            .catch((error) =>
-                console.error('Error obteniendo pedidos:', error)
-            );
-    }, []);
-
-    const marcarComoTerminado = (pedidoId) => {
-        axios
-            .put(`http://192.168.1.132:3000/api/pedidos/${pedidoId}/completado`)
-            .then(() => {
-                setPedidos((prevPedidos) =>
-                    prevPedidos.map((pedido) =>
-                        pedido.id === pedidoId
-                            ? { ...pedido, estado: 'Terminado' }
-                            : pedido
-                    )
+        useEffect(() => {
+            // Obtener todos los pedidos al cargar el componente
+            axios
+                .get('http://192.168.1.132:3000/api/pedidos')
+                .then((response) => {
+                    setPedidos(response.data);
+                })
+                .catch((error) =>
+                    console.error('Error obteniendo pedidos:', error)
                 );
-            })
-            .catch((error) =>
-                console.error('Error al actualizar estado del pedido:', error)
+        }, []);
+
+        const marcarComoTerminado = (pedidoId) => {
+            const pedido = pedidos.find((pedido) => pedido._id === pedidoId);
+        
+            if (!pedido) {
+                console.log('Pedido no encontrado');
+                return;
+            }
+        
+            const todosLosPlatosListos = pedido.platos.every(
+                (plato) => plato.estadoPreparacion === 'listo'
             );
+        
+            if (!todosLosPlatosListos) {
+                console.log('No todos los platos están listos para ser terminados.');
+                return;
+            }
+        
+            axios
+                .put(`http://192.168.1.132:3000/api/pedidos/${pedidoId}/completado`)
+                .then((response) => {
+                    // Verifica que la respuesta tenga el estado esperado
+                    if (response.status === 200) {
+                        setPedidos((prevPedidos) =>
+                            prevPedidos.map((pedido) =>
+                                pedido._id === pedidoId
+                                    ? { ...pedido, estado: 'completado' }
+                                    : pedido
+                            )
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error al actualizar estado del pedido:', error);
+                });
+        };
+        
+
+
+        const actualizarEstadoPreparacion = (pedidoId, platoId, estado) => {
+            axios
+                .put(`http://192.168.1.132:3000/api/pedidos/${pedidoId}/plato/${platoId}/listo`)
+                .then(() => {
+                    setPedidos((prevPedidos) =>
+                        prevPedidos.map((pedido) =>
+                            pedido.id === pedidoId
+                                ? {
+                                    ...pedido,
+                                    platos: pedido.platos.map((plato) =>
+                                        plato.id === platoId
+                                            ? {
+                                                ...plato,
+                                                estadoPreparacion: estado, // Actualiza el estado del plato
+                                            }
+                                            : plato
+                                    ),
+                                }
+                                : pedido
+                        )
+                    );
+                })
+                .catch((error) => {
+                    console.error('Error al actualizar estado de preparación:', error);
+                });
+        };
+
+        const manejarCambioCheckbox = (pedidoId, platoId) => {
+            const pedido = pedidos.find((pedido) => pedido._id === pedidoId);
+
+            if (!pedido || !pedido.platos) {
+                console.error('Pedido o platos no encontrados');
+                return;
+            }
+
+            const plato = pedido.platos.find((plato) => plato._id === platoId);
+
+            if (!plato) {
+                console.error('Plato no encontrado');
+                return;
+            }
+
+            // Determina el nuevo estado del plato (pendiente o listo)
+            const nuevoEstado = plato.estadoPreparacion === 'listo' ? 'pendiente' : 'listo';
+
+            // Actualiza el estado localmente primero
+            setPedidos((prevPedidos) =>
+                prevPedidos.map((pedido) =>
+                    pedido._id === pedidoId
+                        ? {
+                            ...pedido,
+                            platos: pedido.platos.map((plato) =>
+                                plato._id === platoId
+                                    ? { ...plato, estadoPreparacion: nuevoEstado }
+                                    : plato
+                            ),
+                        }
+                        : pedido
+                )
+            );
+
+            // Luego actualiza el estado en el backend
+            actualizarEstadoPreparacion(pedidoId, platoId, nuevoEstado);
+        };
+
+
+
+        const mostrarPedidosTerminados = () => {
+            setMostrarTerminados(!mostrarTerminados);
+        };
+
+        return (
+            <div className="container cocina-container mt-4">
+                <h2 className="cocina-title">Cocina</h2>
+
+                <button
+                    className="btn cocina-toggle-btn mb-3"
+                    onClick={mostrarPedidosTerminados}
+                >
+                    {mostrarTerminados ? 'Pedidos Pendientes' : 'Pedidos Terminados'}
+                </button>
+
+                {/* Mostrar pedidos según el estado */}
+                {!mostrarTerminados && (
+                    <div>
+                        <h3 className="cocina-subtitle">Pedidos Pendientes</h3>
+                        {pedidos.filter((pedido) => pedido.estado === 'pendiente').length === 0 ? (
+                            <p className="cocina-empty">No hay pedidos pendientes.</p>
+                        ) : (
+                            <div className="row cocina-list">
+                                {pedidos
+                                    .filter((pedido) => pedido.estado === 'pendiente')
+                                    .map((pedido) => (
+                                        <div key={pedido._id} className="col-12 col-md-6 col-lg-3 col-xl-2 cocina-pedido">
+                                            <div className="list-group-item" style={{ height: 'fit-content' }}>
+                                                <h5 className="cocina-time">
+                                                    {new Date(pedido.createdAt).toLocaleTimeString('es-ES', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })}
+                                                </h5>
+                                                <p className="cocina-mesa">Mesa: {pedido.mesa}</p>
+
+                                                {pedido.comensales && (
+                                                    <p className="cocina-comensales">Comensales: {pedido.comensales}</p>
+                                                )}
+
+                                                {pedido.alergias && pedido.alergias.length > 0 && (
+                                                    <p className="cocina-alergias">
+                                                        Alergias: {pedido.alergias.join(', ')}
+                                                    </p>
+                                                )}
+
+                                                {pedido.platos.map((plato, index) => {
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                        >
+                                                            <p className="cocina-plato m-1" style={{
+                                                                color: plato.tipoServicio === 'compartir' ? 'purple' : 'red',
+                                                            }}>
+                                                                {plato.nombre} x{plato.cantidad} {plato.tipo} <input
+                                                                    type="checkbox"
+                                                                    checked={plato.estadoPreparacion === 'listo'}
+                                                                    onChange={() => manejarCambioCheckbox(pedido._id, plato._id)}
+                                                                />
+
+                                                            </p>
+
+                                                            {plato.ingredientesEliminados.length > 0 && (
+                                                                <p className="cocina-ingredientes">
+                                                                    Sin {plato.ingredientesEliminados.join(', ')}
+                                                                </p>
+                                                            )}
+
+                                                            {plato.opcionesPersonalizables && (
+                                                                <ul className="cocina-opciones">
+                                                                    {Object.entries(plato.opcionesPersonalizables).map(
+                                                                        ([key, value], index) => (
+                                                                            <li key={index}>{value}</li>
+                                                                        )
+                                                                    )}
+                                                                </ul>
+                                                            )}
+
+
+                                                        </div>
+                                                    );
+                                                })}
+
+                                                <button
+                                                    className="btn cocina-btn-terminado mt-3"
+                                                    onClick={() => marcarComoTerminado(pedido._id)}
+                                                >
+                                                    Terminado
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {mostrarTerminados && (
+                    <div>
+                        <h3 className="cocina-subtitle">Pedidos Terminados</h3>
+                        {pedidos.filter((pedido) => pedido.estado === 'completado').length === 0 ? (
+                            <p className="cocina-empty">No hay pedidos terminados.</p>
+                        ) : (
+                            <div className="row cocina-list">
+                                {pedidos
+                                    .filter((pedido) => pedido.estado === 'completado')
+                                    .map((pedido) => (
+                                        <div key={pedido._id} className="col-12 col-md-6 col-lg-4 col-xl-2 cocina-pedido">
+                                            <div className="list-group-item w-100" style={{ height: 'fit-content' }}>
+                                                <h5 className="cocina-time">
+                                                    {new Date(pedido.createdAt).toLocaleTimeString('es-ES', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })}
+                                                </h5>
+                                                <p className="cocina-mesa">Mesa: {pedido.mesa}</p>
+
+                                                {pedido.comensales && (
+                                                    <p className="cocina-comensales">Comensales: {pedido.comensales}</p>
+                                                )}
+
+                                                {pedido.alergias && pedido.alergias.length > 0 && (
+                                                    <p className="cocina-alergias">
+                                                        Alergias: {pedido.alergias.join(', ')}
+                                                    </p>
+                                                )}
+
+                                                {pedido.platos.map((plato, index) => (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            backgroundColor: plato.tipoServicio === 'compartir' ? 'purple' : 'red',
+                                                        }}
+                                                    >
+                                                        <p className="cocina-plato">
+                                                            {plato.nombre} x{plato.cantidad} {plato.tipo}
+                                                        </p>
+
+                                                        {plato.ingredientesEliminados.length > 0 && (
+                                                            <p className="cocina-ingredientes">
+                                                                Sin {plato.ingredientesEliminados.join(', ')}
+                                                            </p>
+                                                        )}
+
+                                                        {plato.opcionesPersonalizables && (
+                                                            <ul className="cocina-opciones">
+                                                                {Object.entries(plato.opcionesPersonalizables).map(
+                                                                    ([key, value], index) => (
+                                                                        <li key={index}>{value}</li>
+                                                                    )
+                                                                )}
+                                                            </ul>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        );
     };
 
-    const mostrarPedidosTerminados = () => {
-        setMostrarTerminados(!mostrarTerminados);
-    };
-
-    return (
-        <div className="container cocina-container mt-4">
-            <h2 className="cocina-title">Cocina</h2>
-    
-            {/* Botón para alternar entre pedidos pendientes y terminados */}
-            <button
-                className="btn cocina-toggle-btn mb-3"
-                onClick={mostrarPedidosTerminados}
-            >
-                {mostrarTerminados
-                    ? 'Pedidos Pendientes'
-                    : 'Pedidos Terminados'}
-            </button>
-    
-            {/* Mostrar pedidos según el estado */}
-            {!mostrarTerminados && (
-                <div>
-                    <h3 className="cocina-subtitle">Pedidos Pendientes</h3>
-                    {pedidos.filter((pedido) => pedido.estado === 'pendiente').length === 0 ? (
-                        <p className="cocina-empty">No hay pedidos pendientes.</p>
-                    ) : (
-                        <div className="row cocina-list">
-                            {pedidos
-                                .filter((pedido) => pedido.estado === 'pendiente')
-                                .map((pedido) => (
-                                    <div key={pedido.id} className="col-12 col-md-6 col-lg-3 col-xl-2 cocina-pedido">
-                                        <div className="list-group-item" style={{ height: 'fit-content' }}>
-                                            <h5 className="cocina-time">
-                                                {new Date(pedido.createdAt).toLocaleTimeString(
-                                                    'es-ES',
-                                                    { hour: '2-digit', minute: '2-digit' }
-                                                )}
-                                            </h5>
-                                            <p className="cocina-mesa">Mesa: {pedido.mesa}</p>
-                                            {pedido.platos.map((plato, index) => (
-                                                <div key={index}>
-                                                    <p className="cocina-plato">
-                                                        {plato.nombre} x{plato.cantidad} {plato.tipo}
-                                                    </p>
-                                                    {plato.ingredientesEliminados.length > 0 && (
-                                                        <p className="cocina-ingredientes">
-                                                            Sin {plato.ingredientesEliminados.join(', ')}
-                                                        </p>
-                                                    )}
-                                                    {plato.opcionesPersonalizables && (
-                                                        <ul className="cocina-opciones">
-                                                            {Object.entries(plato.opcionesPersonalizables).map(([key, value], index) => (
-                                                                <li key={index}>
-                                                                    {value}
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    )}
-                                                </div>
-                                            ))}
-                                            <button
-                                                className="btn cocina-btn-terminado"
-                                                onClick={() => marcarComoTerminado(pedido._id)}
-                                            >
-                                                Terminado
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
-                    )}
-                </div>
-            )}
-    
-            {mostrarTerminados && (
-                <div>
-                    <h3 className="cocina-subtitle">Pedidos Terminados</h3>
-                    {pedidos.filter((pedido) => pedido.estado === 'completado').length === 0 ? (
-                        <p className="cocina-empty">No hay pedidos terminados.</p>
-                    ) : (
-                        <div className="row cocina-list">
-                            {pedidos
-                                .filter((pedido) => pedido.estado === 'completado')
-                                .map((pedido) => (
-                                    <div key={pedido.id} className="col-12 col-md-6 col-lg-4 col-xl-2 cocina-pedido">
-                                        <div className="list-group-item w-100" style={{ height: 'fit-content' }}>
-                                            <h5 className="cocina-time">
-                                                {new Date(pedido.createdAt).toLocaleTimeString(
-                                                    'es-ES',
-                                                    { hour: '2-digit', minute: '2-digit' }
-                                                )}
-                                            </h5>
-                                            <p className="cocina-mesa">Mesa: {pedido.mesa}</p>
-                                            {pedido.platos.map((plato, index) => (
-                                                <div key={index}>
-                                                    <p className="cocina-plato">
-                                                        {plato.nombre} x{plato.cantidad}
-                                                    </p>
-                                                    {plato.ingredientesEliminados && (
-                                                        <p className="cocina-ingredientes">
-                                                            Sin {plato.ingredientesEliminados.join(', ')}
-                                                        </p>
-                                                    )}
-                                                    {plato.tipo && (
-                                                        <p className="cocina-tipo">Tipo: {plato.tipo}</p>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
-    );      
-};    
-
-export default Cocina;
+    export default Cocina;

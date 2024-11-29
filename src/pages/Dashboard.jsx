@@ -67,7 +67,7 @@ const Dashboard = () => {
                             <div
                                 key={mesa._id}
                                 className={`mesa-card ${mesa.estado === 'abierta' ? 'abierta' : 'cerrada'}`}
-                                onClick={() => handleMesaClick(mesa.numero)}
+                                onClick={() => handleMesaClick(mesa._id)}
                             >
                                 <p>{mesa.numero}</p> {/* Suponiendo que cada mesa tiene un campo "numero" */}
                             </div>

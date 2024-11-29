@@ -39,9 +39,18 @@
     color: #512e5f;
     margin: 10px;
 }
+
+.text-green {
+    color: green;
+}
+
+.text-red {
+    color: red;
+}
+
+
 .plato-name{
     font-size: 1.2rem;
-    color: #512e5f;
     margin: 10px;
 }
 

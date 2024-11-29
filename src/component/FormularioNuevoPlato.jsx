@@ -11,8 +11,8 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
         puntosDeCoccion: [''], // Lista de puntos de cocción
         especificaciones: [''], // Lista de especificaciones
         imagen: '',
-        categoria: 'a',
-        estado: 'activo', // Por defecto 'activo'
+        categoria: 'especiales', // Por defecto 'Especiales'
+        estado: 'habilitado', // Por defecto 'activo'
         tipo: 'plato',
     });
 
@@ -276,8 +276,8 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
                                     onChange={handleChange}
                                     className="modal-select"
                                 >
-                                    <option value="activo">Activo</option>
-                                    <option value="inactivo">Inactivo</option>
+                                    <option value="habilitado">Habilitado</option>
+                                    <option value="inhabilitado">Inhabilitado</option>
                                 </select>
                             </div>
                         </div>

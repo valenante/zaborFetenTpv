@@ -1,22 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';  // Importa useNavigate para redirigir
-import '../styles/SecondarySubNavbar.css'; // Archivo CSS para estilos personalizados
+import { useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
+import CerrarCaja from './CerrarCaja';
+import '../styles/SecondarySubNavbar.css';
 
 const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false); // Estado para mostrar el modal
-    const [mesasCerradas, setMesasCerradas] = useState([]); // Estado para almacenar las mesas cerradas
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [mesasCerradas, setMesasCerradas] = useState([]);
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();  // Inicializa el hook de navegación
+    const [socket, setSocket] = useState(null);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Función para obtener las mesas cerradas desde el backend
+        const socketConnection = io('http://192.168.1.132:3000');
+        setSocket(socketConnection);
+
+        socketConnection.on('mesarecuperada', (mesaActiva) => {
+            setMesasCerradas(prevMesas => prevMesas.filter(mesa => mesa._id !== mesaActiva));
+            window.location.reload();
+        });
+
+        return () => {
+            socketConnection.off('mesaRecuperada');
+        };
+    }, []);
+
+    useEffect(() => {
         const fetchMesasCerradas = async () => {
             setLoading(true);
             try {
-                const response = await fetch('http://192.168.1.132:3000/api/mesasEliminadas'); // Aquí debe estar tu endpoint para obtener mesas cerradas
+                const response = await fetch('http://192.168.1.132:3000/api/mesasEliminadas');
                 const data = await response.json();
-                console.log(data);
-                setMesasCerradas(data.mesas); // Suponemos que el backend devuelve un array de mesas cerradas
+                setMesasCerradas(data.mesas);
             } catch (error) {
                 console.error('Error al obtener las mesas cerradas:', error);
             }
@@ -24,19 +42,20 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
         };
 
         if (isModalOpen) {
-            fetchMesasCerradas(); // Cargar mesas cuando el modal se abre
+            fetchMesasCerradas();
         }
     }, [isModalOpen]);
 
     const handleRecuperarMesa = (mesaId) => {
-        // Función para recuperar una mesa cuando el usuario haga clic
         fetch(`http://192.168.1.132:3000/api/mesasEliminadas/recuperar/${mesaId}`, {
             method: 'POST',
         })
             .then((response) => response.json())
             .then((data) => {
                 alert('Mesa recuperada exitosamente');
-                setIsModalOpen(false); // Cerrar el modal después de recuperar la mesa
+                socket.emit('mesaRecuperada', mesaId);
+                setMesasCerradas(prevMesas => prevMesas.filter(mesa => mesa._id !== mesaId));
+                window.location.reload();
             })
             .catch((error) => {
                 console.error('Error al recuperar la mesa:', error);
@@ -44,9 +63,57 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
             });
     };
 
-    // Función para redirigir a la página principal (/)
     const handleUsuariosRedirect = () => {
-        navigate('/'); // Redirige a la página principal
+        navigate('/');
+    };
+
+    const handleSetPassword = async () => {
+        try {
+            const response = await fetch('http://192.168.1.132:3000/api/auth/setPassword', {
+                method: 'PUT', // Cambié a PUT para la actualización
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password }), // Enviamos la nueva contraseña
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Contraseña del día establecida exitosamente');
+                setIsPasswordModalOpen(false); // Cerrar el modal después de guardar la contraseña
+            } else {
+                alert(data.message || 'Error al establecer la contraseña');
+            }
+        } catch (error) {
+            console.error('Error al enviar la contraseña:', error);
+            alert('Hubo un error al establecer la contraseña');
+        }
+    };
+
+
+    useEffect(() => {
+        const fetchPassword = async () => {
+            try {
+                const response = await fetch('http://192.168.1.132:3000/api/auth/getPassword');
+                const data = await response.json();
+                if (data.success && data.password) {
+                    setPassword(data.password); // Establece la contraseña recuperada
+                } else {
+                    setPassword(''); // Si no hay contraseña, establece un valor vacío
+                }
+            } catch (error) {
+                console.error('Error al obtener la contraseña:', error);
+            }
+        };
+
+        if (isPasswordModalOpen) {
+            fetchPassword(); // Cargar la contraseña cuando se abre el modal
+        }
+    }, [isPasswordModalOpen]);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(prevState => !prevState);
     };
 
     return (
@@ -61,13 +128,47 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
                 <button className="btn" onClick={onEstadisticas}>
                     Estadísticas
                 </button>
-                {/* Botón Usuarios que redirige a la página principal */}
                 <button className="btn" onClick={handleUsuariosRedirect}>
                     Usuarios
                 </button>
+                {/* Botón para abrir el modal de la contraseña */}
+                <button className="btn" onClick={() => setIsPasswordModalOpen(true)}>
+                    Contraseña del Día
+                </button>
+                <div className="secondary-subnavbar">
+                    {/* Botón que proviene del componente CerrarCaja */}
+                    <CerrarCaja />
+                </div>
             </div>
 
-            {/* Modal superpuesto */}
+            {/* Modal para la contraseña */}
+            {isPasswordModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <button className="modal-close-btn" onClick={() => setIsPasswordModalOpen(false)}>
+                            X
+                        </button>
+                        <h2 className="modal-title">Establecer Contraseña del Día</h2>
+                        <div className="password-input-container">
+                            <input
+                                type={showPassword ? "text" : "password"}  // Muestra u oculta la contraseña
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)} // Permite modificar la contraseña
+                                placeholder="Ingrese la contraseña"
+                                className="password-input"
+                            />
+                            <button className="show-password-btn" onClick={togglePasswordVisibility}>
+                                {showPassword ? 'Ocultar' : 'Mostrar'}
+                            </button>
+                        </div>
+                        <button className="btn" onClick={handleSetPassword}>
+                            Establecer Contraseña
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal superpuesto para recuperar mesas */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
