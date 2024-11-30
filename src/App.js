@@ -8,6 +8,7 @@ import Platos from './pages/Platos';
 import Bebidas from './pages/Bebidas';
 import Cocina from './pages/Cocina';
 import PrivateRoute from './component/PrivateRoute'; // Importa la ruta protegida
+import Barra from './pages/Barra';
 import { Navigate } from 'react-router-dom';
 
 import './App.css';
@@ -40,6 +41,11 @@ function App() {
         <Route
           path="/cocina"
           element={<PrivateRoute element={<Cocina />} roles={['admin','cocinero']} />}
+        />
+
+        <Route
+          path="/barra"
+          element={<PrivateRoute element={<Barra />} roles={['admin','waiter']} />}
         />
 
         {/* Ruta por defecto para el resto de los casos */}

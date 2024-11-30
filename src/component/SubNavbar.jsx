@@ -9,6 +9,7 @@ const SubNavbar = () => {
                 <li><a href="/platos">Platos</a></li>
                 <li><a href="/bebidas">Bebidas</a></li>
                 <li><a href="/cocina">Cocina</a></li>
+                <li><a href="/barra">Barra</a></li>
             </ul>
         </nav>
     );
