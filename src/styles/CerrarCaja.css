@@ -1,0 +1,139 @@
+/* Estilo para los overlays de los modales */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Modal con fondo morado y estilo único para el resumen de la caja */
+  .caja-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro */
+  }
+  
+  .caja-modal-content {
+    background-color: #512e5f; /* Fondo morado para el modal */
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+  }
+  
+  .caja-modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 1.5em;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .caja-modal-title {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+  }
+  
+  .caja-loading-text {
+    font-size: 1.2em;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  /* Botón dentro del modal con color naranja */
+  .caja-btn {
+    background-color: #512e5f;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .caja-btn:hover {
+    background-color: rgb(155, 78, 1);
+  }
+  
+  .caja-confirmar-btn {
+    background-color: rgb(155, 78, 1); /* Naranja */
+    padding: 10px;
+    color: white;
+    border-radius: 10px;
+    text-shadow: none;
+  }
+  
+  /* Modal para ingresar la contraseña */
+  .caja-password-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro más tenue */
+  }
+  
+  .caja-password-modal-content {
+    background-color: #512e5f; /* Fondo morado */
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+  }
+  
+  .caja-password-modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 1.5em;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .caja-password-modal-title {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+  }
+  
+  .caja-password-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #512e5f;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-size: 1em;
+  }
+  
+  .caja-password-input:focus {
+    outline: none;
+    border-color: rgb(155, 78, 1);
+    box-shadow: 0 0 5px rgba(155, 78, 1, 0.5);
+  }
+  
+  /* Botón de verificación de la contraseña */
+  .caja-verificar-btn {
+    background-color: rgb(155, 78, 1); /* Naranja */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .caja-verificar-btn:hover {
+    background-color: #7a487b; /* Un tono más claro de naranja */
+  }
+  

@@ -1,0 +1,81 @@
+/* Para centrar completamente el formulario */
+.lody {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #512e5f; /* Fondo claro para contraste */
+  font-family: 'Arial', sans-serif;
+}
+
+.login-container {
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+  background-color: #fdf7ff; /* Fondo del formulario */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-title {
+  color: #512e5f;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.label {
+  font-weight: bold;
+  color: #512e5f;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #512e5f;
+  border-radius: 5px;
+  font-size: 1em;
+  margin-top: 5px;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: rgb(155, 78, 1);
+  box-shadow: 0 0 5px rgba(155, 78, 1, 0.5);
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9em;
+}
+
+.login-button {
+  background-color: #512e5f;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: rgb(155, 78, 1);
+}
+
+.login-button.loading {
+  cursor: wait;
+  background-color: #7a487b; /* Color más claro para indicar carga */
+}

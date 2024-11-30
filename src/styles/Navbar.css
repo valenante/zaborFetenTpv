@@ -3,11 +3,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgb(198, 105, 232);
-    background: -moz-linear-gradient(86deg, rgba(198, 105, 232, 1) 0%, rgba(255, 255, 255, 1) 0%, rgba(93, 0, 147, 1) 24%, rgba(105, 0, 153, 1) 100%);
-    background: -webkit-linear-gradient(86deg, rgba(198, 105, 232, 1) 0%, rgba(255, 255, 255, 1) 0%, rgba(93, 0, 147, 1) 24%, rgba(105, 0, 153, 1) 100%);
-    background: linear-gradient(86deg, rgba(198, 105, 232, 1) 0%, rgba(255, 255, 255, 1) 0%, rgba(93, 0, 147, 1) 24%, rgba(105, 0, 153, 1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#c669e8", endColorstr="#690099", GradientType=1);
+    background: linear-gradient(to right, 
+    rgba(255, 255, 255, 1) 5%, 
+    rgba(155, 94, 125, 0.5) 20%, 
+    #512e5f 50%);
     padding: 10px;
     position: sticky;
     top: 0;

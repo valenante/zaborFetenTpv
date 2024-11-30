@@ -9,9 +9,10 @@
 .secondary-subnavbar .btn {
     margin: 0 10px;
     padding: 10px 20px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     border-radius: 5px;
+    color: #452452
 }
 
 .secondary-subnavbar .btn:hover {
@@ -110,3 +111,182 @@
 .recover-btn:hover {
     background-color: #452452;
 }
+
+/* Modal Overlay */
+.password-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Content */
+.password-modal-content {
+    background-color: #512e5f;  /* Color principal */
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+/* Modal Title */
+.password-modal-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Close Button */
+.password-modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Password Input Container */
+.password-input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Password Input */
+.password-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+/* Show Password Button */
+.password-show-btn {
+    background-color: #9b4e01;  /* Color secundario */
+    border: none;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Set Password Button */
+.password-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #9b4e01;  /* Color secundario */
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Hover effects */
+.password-show-btn:hover,
+.password-btn:hover {
+    background-color: #512e5f;  /* Cambio a color principal en hover */
+}
+
+/* Focus styles */
+.password-input:focus {
+    outline: none;
+    border-color: #512e5f; /* Resalta con color principal al hacer foco */
+}
+
+/* Estilo para los overlays de los modales */
+.modal-overlay-recuperar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Modal con fondo morado y estilo único para mesas cerradas */
+  .modal-content-recuperar {
+    background-color: #512e5f; /* Fondo morado para el modal */
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+  }
+  
+  .modal-close-btn-recuperar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 1.5em;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .modal-title-recuperar {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+  }
+  
+  .loading-text-recuperar {
+    font-size: 1.2em;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .no-mesas-recuperar {
+    font-size: 1.2em;
+    color: #fff;
+    font-style: italic;
+  }
+  
+  /* Estilo para la lista de mesas cerradas */
+  .mesas-list-recuperar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .mesa-item-recuperar {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    color: #fff;
+  }
+  
+  .recover-btn-recuperar {
+    background-color: rgb(155, 78, 1); /* Naranja */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+  }
+  
+  .recover-btn-recuperar:hover {
+    background-color: #7a487b; /* Un tono más claro de naranja */
+  }
+  

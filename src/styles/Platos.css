@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     height: 80vh;
-    background: rgba(111, 27, 159, 1)
+    background: 512e5f;
 }
 
 .categorias-container{
@@ -76,7 +76,7 @@
     color: white;
     width: 250px;
     height: 200px;
-    background-color: rgba(111, 27, 159, 1);
+    background-color: #512e5f;
 }
 
 .plato-card h4{

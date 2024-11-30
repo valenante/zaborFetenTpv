@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import '../styles/Register.css';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -24,9 +25,9 @@ function Register() {
         });
 
         const data = await response.json();
-      
+
         setRole(data.user.role); // Almacena el rol del usuario
-        
+
       } catch (error) {
         console.error('Error al obtener los datos del usuario:', error);
         setErrorMessage('Error de conexión, inténtalo más tarde');
@@ -79,53 +80,63 @@ function Register() {
   };
 
   return (
-    <div>
-      <h2>Registro de Usuario</h2>
-      <form onSubmit={handleRegister}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {setRole && (
-          <div>
-            <label>Role:</label>
-            <select
-              value={selectedRole} // Usamos selectedRole para manejar el valor del select
-              onChange={(e) => setSelectedRole(e.target.value)} // Solo actualizamos selectedRole
+    <div className="lody">
+      <div className="register-container">
+        <h2 className="register-title">Registro de Usuario</h2>
+        <form className="register-form" onSubmit={handleRegister}>
+          <div className="form-group">
+            <label className="label">Username:</label>
+            <input
+              className="input-field"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
-            >
-              <option value="waiter">Camarero</option>
-              <option value="admin">Administrador</option>
-            </select>
+            />
           </div>
-        )}
-        {!setRole && (
-          <div>
-            <label>Role:</label>
-            <input type="text" value={role} readOnly />
+          <div className="form-group">
+            <label className="label">Password:</label>
+            <input
+              className="input-field"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-        )}
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Cargando...' : 'Registrar'}
-        </button>
-      </form>
+          {setRole && (
+            <div className="form-group">
+              <label className="label">Role:</label>
+              <select
+                className="input-field"
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                required
+              >
+                <option value="waiter">Camarero</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+          )}
+          {!setRole && (
+            <div className="form-group">
+              <label className="label">Role:</label>
+              <input
+                className="input-field"
+                type="text"
+                value={role}
+                readOnly
+              />
+            </div>
+          )}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          <button className={`login-button ${loading ? 'loading' : ''}`} type="submit" disabled={loading}>
+            {loading ? 'Cargando...' : 'Registrar'}
+          </button>
+        </form>
+      </div>
     </div>
-  );
-}
+  )
+};
 
 export default Register;

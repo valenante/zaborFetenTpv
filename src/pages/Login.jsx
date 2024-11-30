@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import '../styles/Login.css';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -57,46 +58,40 @@ function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px' }}>
-      <h2>Iniciar sesión</h2>
-      <form onSubmit={handleLogin}>
-        <div>
+    <div className="lody">
+    <div className="login-container">
+      <h2 className="login-title">Iniciar sesión</h2>
+      <form onSubmit={handleLogin} className="login-form">
+        <div className="form-group">
           <label>Username:</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', margin: '10px 0' }}
+            className="input-field"
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', margin: '10px 0' }}
+            className="input-field"
           />
         </div>
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <button
           type="submit"
           disabled={loading}
-          style={{
-            backgroundColor: '#007bff',
-            color: 'white',
-            padding: '10px 15px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            width: '100%',
-          }}
+          className={`login-button ${loading ? 'loading' : ''}`}
         >
           {loading ? 'Cargando...' : 'Iniciar sesión'}
         </button>
       </form>
+    </div>
     </div>
   );
 }

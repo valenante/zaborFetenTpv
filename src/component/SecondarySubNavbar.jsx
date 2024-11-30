@@ -143,12 +143,12 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
 
             {/* Modal para la contraseña */}
             {isPasswordModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close-btn" onClick={() => setIsPasswordModalOpen(false)}>
+                <div className="password-modal-overlay">
+                    <div className="password-modal-content">
+                        <button className="password-modal-close-btn" onClick={() => setIsPasswordModalOpen(false)}>
                             X
                         </button>
-                        <h2 className="modal-title">Establecer Contraseña del Día</h2>
+                        <h2 className="password-modal-title">Establecer Contraseña del Día</h2>
                         <div className="password-input-container">
                             <input
                                 type={showPassword ? "text" : "password"}  // Muestra u oculta la contraseña
@@ -157,35 +157,36 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
                                 placeholder="Ingrese la contraseña"
                                 className="password-input"
                             />
-                            <button className="show-password-btn" onClick={togglePasswordVisibility}>
+                            <button className="password-show-btn" onClick={togglePasswordVisibility}>
                                 {showPassword ? 'Ocultar' : 'Mostrar'}
                             </button>
                         </div>
-                        <button className="btn" onClick={handleSetPassword}>
+                        <button className="password-btn" onClick={handleSetPassword}>
                             Establecer Contraseña
                         </button>
                     </div>
                 </div>
             )}
 
+
             {/* Modal superpuesto para recuperar mesas */}
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>
+                <div className="modal-overlay-recuperar">
+                    <div className="modal-content-recuperar">
+                        <button className="modal-close-btn-recuperar" onClick={() => setIsModalOpen(false)}>
                             X
                         </button>
-                        <h2 className="modal-title">Mesas Cerradas</h2>
+                        <h2 className="modal-title-recuperar">Mesas Cerradas</h2>
                         {loading ? (
-                            <p className="loading-text">Cargando mesas...</p>
+                            <p className="loading-text-recuperar">Cargando mesas...</p>
                         ) : !Array.isArray(mesasCerradas) || mesasCerradas.length === 0 ? (
-                            <p className="no-mesas">No hay mesas cerradas.</p>
+                            <p className="no-mesas-recuperar">No hay mesas cerradas.</p>
                         ) : (
-                            <ul className="mesas-list">
+                            <ul className="mesas-list-recuperar">
                                 {mesasCerradas.map((mesa) => (
-                                    <li key={mesa._id} className="mesa-item">
+                                    <li key={mesa._id} className="mesa-item-recuperar">
                                         {`Mesa ${mesa.numeroMesa}`}
-                                        <button className="recover-btn" onClick={() => handleRecuperarMesa(mesa._id)}>
+                                        <button className="recover-btn-recuperar" onClick={() => handleRecuperarMesa(mesa._id)}>
                                             Recuperar
                                         </button>
                                     </li>

@@ -91,15 +91,13 @@ const BottomBar = () => {
         <>
             <Paper
                 sx={{
-                    position: 'fixed',
                     bottom: 0,
                     left: 0,
-                    right: 0,
-                    zIndex: 10,
+                    right: 0
                 }}
                 elevation={3}
             >
-                <BottomNavigation showLabels sx={{ height: '80px', backgroundColor: 'rgb(117, 10, 156)', padding: '10px' }}>
+                <BottomNavigation showLabels sx={{ height: '80px', backgroundColor: '#774b89', padding: '10px' }}>
                     <BottomNavigationAction
                         label="Cerrar Mesa"
                         icon={<CloseIcon />}
@@ -134,11 +132,12 @@ const BottomBar = () => {
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        bgcolor: 'white',
+                        bgcolor: '#512e5f',
                         boxShadow: 24,
                         p: 4,
                         borderRadius: 2,
                         minWidth: 300,
+                        color: 'white',
                     }}
                 >
                     <h2 style={{ textAlign: 'center' }}>Cerrar Mesa</h2>
@@ -150,6 +149,7 @@ const BottomBar = () => {
                         margin="normal"
                         value={efectivo}
                         onChange={(e) => setEfectivo(e.target.value)}
+                        style={{ marginBottom: '10px', backgroundColor: 'white',borderRadius: '5px' }}
                     />
                     <TextField
                         label="Pago con Tarjeta (€)"
@@ -158,6 +158,7 @@ const BottomBar = () => {
                         margin="normal"
                         value={tarjeta}
                         onChange={(e) => setTarjeta(e.target.value)}
+                        style={{ marginBottom: '10px', backgroundColor: 'white',borderRadius: '5px' }}
                     />
                     {validationError && (
                         <p style={{ color: 'red', textAlign: 'center' }}>{validationError}</p>
@@ -167,6 +168,7 @@ const BottomBar = () => {
                             variant="contained"
                             color="error"
                             onClick={() => setOpenModal(false)}
+                            style={{ backgroundColor: 'rgba(204, 102, 0, 1)', color: 'white' }}
                         >
                             Cancelar
                         </Button>
@@ -174,6 +176,7 @@ const BottomBar = () => {
                             variant="contained"
                             color="primary"
                             onClick={onCloseTable}
+                            style={{ backgroundColor: 'rgba(204, 102, 0, 1)', color: 'white' }}
                         >
                             Confirmar
                         </Button>

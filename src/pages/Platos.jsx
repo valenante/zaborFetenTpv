@@ -76,7 +76,7 @@ const Platos = () => {
                             fontSize: '16px',
                             border: 'none',
                             borderRadius: '10px',
-                            backgroundColor: '#620375',
+                            backgroundColor: '#774b89',
                             color: 'white',
                             cursor: 'pointer',
                             marginTop: '20px',

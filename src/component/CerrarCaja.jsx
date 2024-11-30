@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/SecondarySubNavbar.css';
+import '../styles/CerrarCaja.css';
 
 const CerrarCaja = () => {
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal de resumen de caja
@@ -87,64 +87,66 @@ const CerrarCaja = () => {
     };
 
     return (
-        <div>
-            {/* Botón para abrir el modal con el resumen de la caja */}
-            <button className="btn" onClick={() => { setIsModalOpen(true); calcularCaja(); }}>
-                Cerrar Caja
-            </button>
+<div>
+    {/* Botón para abrir el modal con el resumen de la caja */}
+    <button className="btn caja-btn" onClick={() => { setIsModalOpen(true); calcularCaja(); }}>
+        Cerrar Caja
+    </button>
 
-            {/* Modal con el resumen de la caja */}
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>
-                            X
-                        </button>
-                        <h2 className="modal-title">Resumen de Caja</h2>
+    {/* Modal con el resumen de la caja */}
+    {isModalOpen && (
+        <div className="modal-overlay caja-modal-overlay">
+            <div className="modal-content-caja caja-modal-content">
+                <button className="modal-close-btn caja-modal-close-btn" onClick={() => setIsModalOpen(false)}>
+                    X
+                </button>
+                <h2 className="modal-title-caja caja-modal-title">Resumen de Caja</h2>
 
-                        {loading ? (
-                            <p className="loading-text">Calculando...</p>
-                        ) : (
-                            <div>
-                                <p>Efectivo: {resumenCaja.efectivo.toFixed(2)} €</p>
-                                <p>Tarjeta: {resumenCaja.tarjeta.toFixed(2)} €</p>
-                                <p><strong>Total: {resumenCaja.total.toFixed(2)} €</strong></p>
+                {loading ? (
+                    <p className="loading-text-caja caja-loading-text">Calculando...</p>
+                ) : (
+                    <div>
+                        <p>Efectivo: {resumenCaja.efectivo.toFixed(2)} €</p>
+                        <p>Tarjeta: {resumenCaja.tarjeta.toFixed(2)} €</p>
+                        <p><strong>Total: {resumenCaja.total.toFixed(2)} €</strong></p>
 
-                                {/* Botón para abrir el modal de la contraseña */}
-                                <button
-                                    className="btn"
-                                    onClick={() => setIsPasswordModalOpen(true)} // Abre el modal para ingresar la contraseña
-                                    disabled={loading}
-                                >
-                                    Confirmar y Cerrar Caja
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Modal para ingresar la contraseña */}
-            {isPasswordModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close-btn" onClick={() => setIsPasswordModalOpen(false)}>
-                            X
-                        </button>
-                        <h2 className="modal-title">Ingrese la Contraseña</h2>
-                        <input
-                            type="password"
-                            placeholder="Contraseña"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button className="btn" onClick={verificarContraseña}>
-                            Verificar Contraseña
+                        {/* Botón para abrir el modal de la contraseña */}
+                        <button
+                            className="btn-caja caja-confirmar-btn"
+                            onClick={() => setIsPasswordModalOpen(true)} // Abre el modal para ingresar la contraseña
+                            disabled={loading}
+                        >
+                            Confirmar y Cerrar Caja
                         </button>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
+    )}
+
+    {/* Modal para ingresar la contraseña */}
+    {isPasswordModalOpen && (
+        <div className="modal-overlay caja-password-modal-overlay">
+            <div className="modal-content caja-password-modal-content">
+                <button className="modal-close-btn caja-password-modal-close-btn" onClick={() => setIsPasswordModalOpen(false)}>
+                    X
+                </button>
+                <h2 className="modal-title caja-password-modal-title">Ingrese la Contraseña</h2>
+                <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="caja-password-input"
+                />
+                <button className="btn caja-verificar-btn" onClick={verificarContraseña}>
+                    Verificar Contraseña
+                </button>
+            </div>
+        </div>
+    )}
+</div>
+
     );
 };
 
