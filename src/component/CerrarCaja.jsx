@@ -8,6 +8,7 @@ const CerrarCaja = () => {
     const [loading, setLoading] = useState(false);
     const [password, setPassword] = useState(''); // Estado para la contraseña
     const [passwordFromDB, setPasswordFromDB] = useState(''); // Contraseña desde la DB
+    const [total, setTotal] = useState(0);
 
     // Función para recuperar la contraseña del día desde la base de datos
     const obtenerContraseñaDelDia = async () => {
@@ -37,6 +38,7 @@ const CerrarCaja = () => {
             const tarjeta = data.mesas.reduce((acc, mesa) => acc + (mesa.metodoPago?.tarjeta || 0), 0);
             const total = efectivo + tarjeta;
 
+            setTotal(total)
             setResumenCaja({ efectivo, tarjeta, total });
         } catch (error) {
             console.error('Error al calcular la caja:', error);
@@ -59,12 +61,30 @@ const CerrarCaja = () => {
     const cerrarCaja = async () => {
         setLoading(true);
         try {
+            if(total <= 0) {
+                throw new Error('El total de la caja debe ser mayor que 0.');
+            }
+
             // Generar y enviar el informe por correo
             const informeResponse = await fetch('http://192.168.1.132:3000/api/caja/enviarInforme', {
                 method: 'POST',
             });
             const informeResult = await informeResponse.json();
             if (!informeResult.success) throw new Error('Error al enviar el informe por correo.');
+
+            console.log(informeResult)
+
+            // Crear el registro de caja diaria
+            const crearCajaResponse = await fetch('http://192.168.1.132:3000/api/cajaDiaria/crear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    fecha: new Date().toISOString(), // Fecha actual en formato ISO
+                    total: total, // Asegúrate de que `total` esté disponible en el resultado del informe
+                }),
+            });
 
             // Vaciar las colecciones
             const limpiarResponse = await fetch('http://192.168.1.132:3000/api/caja/limpiar', {
@@ -73,7 +93,7 @@ const CerrarCaja = () => {
             const limpiarResult = await limpiarResponse.json();
             if (!limpiarResult.success) throw new Error('Error al limpiar las colecciones.');
 
-            //Refrescar la página
+            // Refrescar la página
             alert('Caja cerrada exitosamente. Informe enviado.');
 
             window.location.reload();
@@ -86,66 +106,67 @@ const CerrarCaja = () => {
         setLoading(false);
     };
 
+
     return (
-<div>
-    {/* Botón para abrir el modal con el resumen de la caja */}
-    <button className="btn caja-btn" onClick={() => { setIsModalOpen(true); calcularCaja(); }}>
-        Cerrar Caja
-    </button>
+        <div>
+            {/* Botón para abrir el modal con el resumen de la caja */}
+            <button className="btn caja-btn" onClick={() => { setIsModalOpen(true); calcularCaja(); }}>
+                Cerrar Caja
+            </button>
 
-    {/* Modal con el resumen de la caja */}
-    {isModalOpen && (
-        <div className="modal-overlay caja-modal-overlay">
-            <div className="modal-content-caja caja-modal-content">
-                <button className="modal-close-btn caja-modal-close-btn" onClick={() => setIsModalOpen(false)}>
-                    X
-                </button>
-                <h2 className="modal-title-caja caja-modal-title">Resumen de Caja</h2>
+            {/* Modal con el resumen de la caja */}
+            {isModalOpen && (
+                <div className="modal-overlay caja-modal-overlay">
+                    <div className="modal-content-caja caja-modal-content">
+                        <button className="modal-close-btn caja-modal-close-btn" onClick={() => setIsModalOpen(false)}>
+                            X
+                        </button>
+                        <h2 className="modal-title-caja caja-modal-title">Resumen de Caja</h2>
 
-                {loading ? (
-                    <p className="loading-text-caja caja-loading-text">Calculando...</p>
-                ) : (
-                    <div>
-                        <p>Efectivo: {resumenCaja.efectivo.toFixed(2)} €</p>
-                        <p>Tarjeta: {resumenCaja.tarjeta.toFixed(2)} €</p>
-                        <p><strong>Total: {resumenCaja.total.toFixed(2)} €</strong></p>
+                        {loading ? (
+                            <p className="loading-text-caja caja-loading-text">Calculando...</p>
+                        ) : (
+                            <div>
+                                <p>Efectivo: {resumenCaja.efectivo.toFixed(2)} €</p>
+                                <p>Tarjeta: {resumenCaja.tarjeta.toFixed(2)} €</p>
+                                <p><strong>Total: {resumenCaja.total.toFixed(2)} €</strong></p>
 
-                        {/* Botón para abrir el modal de la contraseña */}
-                        <button
-                            className="btn-caja caja-confirmar-btn"
-                            onClick={() => setIsPasswordModalOpen(true)} // Abre el modal para ingresar la contraseña
-                            disabled={loading}
-                        >
-                            Confirmar y Cerrar Caja
+                                {/* Botón para abrir el modal de la contraseña */}
+                                <button
+                                    className="btn-caja caja-confirmar-btn"
+                                    onClick={() => setIsPasswordModalOpen(true)} // Abre el modal para ingresar la contraseña
+                                    disabled={loading}
+                                >
+                                    Confirmar y Cerrar Caja
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Modal para ingresar la contraseña */}
+            {isPasswordModalOpen && (
+                <div className="modal-overlay caja-password-modal-overlay">
+                    <div className="modal-content caja-password-modal-content">
+                        <button className="modal-close-btn caja-password-modal-close-btn" onClick={() => setIsPasswordModalOpen(false)}>
+                            X
+                        </button>
+                        <h2 className="modal-title caja-password-modal-title">Ingrese la Contraseña</h2>
+                        <input
+                            type="password"
+                            placeholder="Contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="caja-password-input"
+                        />
+                        <button className="btn caja-verificar-btn" onClick={verificarContraseña}>
+                            Verificar Contraseña
                         </button>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
-    )}
-
-    {/* Modal para ingresar la contraseña */}
-    {isPasswordModalOpen && (
-        <div className="modal-overlay caja-password-modal-overlay">
-            <div className="modal-content caja-password-modal-content">
-                <button className="modal-close-btn caja-password-modal-close-btn" onClick={() => setIsPasswordModalOpen(false)}>
-                    X
-                </button>
-                <h2 className="modal-title caja-password-modal-title">Ingrese la Contraseña</h2>
-                <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="caja-password-input"
-                />
-                <button className="btn caja-verificar-btn" onClick={verificarContraseña}>
-                    Verificar Contraseña
-                </button>
-            </div>
-        </div>
-    )}
-</div>
 
     );
 };

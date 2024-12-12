@@ -13,7 +13,7 @@ function useAuth() {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/api/auth', {
+        const response = await fetch('http://192.168.1.132:3000/api/auth', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

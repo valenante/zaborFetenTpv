@@ -141,6 +141,7 @@
     font-size: 24px;
     margin-bottom: 20px;
     text-align: center;
+    color: white;
 }
 
 /* Close Button */
@@ -290,3 +291,88 @@
     background-color: #7a487b; /* Un tono más claro de naranja */
   }
   
+ /* Estilo para el contenedor del menú hamburguesa */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;  /* Tamaño ajustable */
+    height: 24px;  /* Asegura que haya suficiente espacio para las tres líneas */
+    margin-top: 1.2rem;
+    margin-left: 1.2rem;
+    cursor: pointer;
+}
+
+/* Estilo para la línea del menú */
+.hamburger-icon {
+    background-color: #ffffff;  /* Color oscuro */
+    height: 3px;  /* Grosor de las líneas */
+    width: 8%;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Añadir el pseudo-elemento para la segunda y tercera línea */
+.hamburger-icon::before,
+.hamburger-icon::after {
+    content: '';
+    background-color: #ffffff;
+    height: 3px;
+    width: 100%;
+    position: absolute;
+    transition: all 0.3s ease;
+}
+
+/* Posición de las líneas superior e inferior */
+.hamburger-icon::before {
+    top: -7px;  /* Línea superior */
+}
+
+.hamburger-icon::after {
+    top: 7px;  /* Línea inferior */
+}
+
+/* Estilo cuando el menú hamburguesa se abre */
+.hamburger-menu.open .hamburger-icon {
+    transform: rotate(45deg);  /* Rota la línea central */
+}
+
+.hamburger-menu.open .hamburger-icon::before {
+    top: 0;  /* La línea superior se mueve al centro */
+    transform: rotate(90deg);  /* Rotación para crear la X */
+}
+
+.hamburger-menu.open .hamburger-icon::after {
+    top: 0;  /* La línea inferior se mueve al centro */
+    transform: rotate(90deg);  /* Rotación para crear la X */
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Muestra el menú hamburguesa en pantallas pequeñas */
+    .hamburger-menu {
+        display: flex;
+    }
+
+    /* Esconde el menú de navegación por defecto */
+    .secondary-subnavbar {
+        display: none;
+    }
+
+    /* Muestra el menú de navegación cuando está abierto */
+    .secondary-subnavbar.open {
+        display: block;
+    }
+
+    /* Estilo para los botones en pantallas pequeñas */
+    .btn {
+        width: 100%;
+        text-align: left;
+        padding: 12px 20px;
+        margin: 8px 0;
+        font-size: 16px;
+    }
+    .modal-content-recuperar {
+        width: 75%;
+    }
+}

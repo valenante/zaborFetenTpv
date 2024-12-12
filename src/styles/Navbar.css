@@ -1,25 +1,47 @@
 /* Estilos del Navbar */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(to right, 
-    rgba(255, 255, 255, 1) 5%, 
-    rgba(155, 94, 125, 0.5) 20%, 
-    #512e5f 50%);
-    padding: 10px;
-    position: sticky;
-    top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, 
+  rgba(255, 255, 255, 1) 5%, 
+  rgba(155, 94, 125, 0.5) 20%, 
+  #512e5f 50%);
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  transition: all 0.3s ease; /* Transición suave */
 }
 
 /* Logo y nombre de la app */
 .navbar-logo {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinea el logo a la izquierda por defecto */
 }
 
 .navbar-logo .logo {
-    width: 60%;
-    /* Ajusta el tamaño del logo */
-    margin: 0 20px;
+  width: 60%; /* Ajusta el tamaño del logo */
+  margin: 0 20px;
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 768px) {
+  .navbar {
+      justify-content: center; /* Centra el contenido de la navbar */
+      background: linear-gradient(to right, 
+        #512e5f 5%,    /* Morado oscuro a la izquierda */
+        rgba(255, 255, 255, 1) 50%,  /* Blanco en el centro */
+        #512e5f 95%);  /* Morado oscuro a la derecha */
+  }
+
+  .navbar-logo {
+      width: 100%; /* Ocupa todo el ancho disponible */
+      justify-content: center; /* Centra el logo en la navbar */
+  }
+
+  .navbar-logo .logo {
+      width: 30%; /* Ajusta el tamaño del logo */
+      margin: 0; /* Elimina márgenes */
+  }
 }

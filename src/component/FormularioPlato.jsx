@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/FormularioPlato.css';
-import axios from 'axios';
 
 const FormularioPlato = ({ plato, cerrarFormulario, setPlatos, platos }) => {
     const [formData, setFormData] = useState({

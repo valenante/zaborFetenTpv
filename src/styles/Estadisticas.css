@@ -1,0 +1,253 @@
+.estadisticas-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background: #512e5f;
+    margin: 20px;
+    max-height: calc(100vh - 120px); /* Restringe la altura del contenedor para evitar que se salga de la pantalla */
+    overflow-y: auto; /* Agrega scroll si el contenido excede la altura */
+}
+
+.estadisticas-containerMini {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.estadisticas-btn-volver {
+    padding: 30px;
+    border-radius: 10px;
+    color: white;
+    background-color: #774b89;
+    width: auto;
+    height: auto;
+    transition: 200ms all;
+    font-size: 1.3rem;
+}
+
+.estadisticas-btn {
+    border: 1px solid #ccc;
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid rgba(204, 102, 0, 1);
+    color: white;
+    background-color: #512e5f;
+    width: 200px;
+    height: 150px;
+    transition: 200ms all;
+    margin: 15px;
+    font-size: 1.3rem;
+}
+
+.estadisticas-btn:hover {
+    transform: scale(1.1);
+}
+
+.estadisticas-categorias {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.categoria-item-est {
+    background-color: #512e5f;
+    color: white;
+    padding: 15px;
+    font-size: 1.2rem;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(204, 102, 0, 1);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.categoria-item-est:hover {
+    transform: scale(1.1);
+}
+
+.estadisticas-lista h2{
+    text-align: center;
+    color: white;
+}
+
+.lista-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    margin: 10px 0;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.item-nombre {
+    font-weight: bold;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.item-ventas {
+    color: #555;
+    font-size: 14px;
+}
+
+/* Efectos de transición y hover para botones */
+.estadisticas-btn:hover {
+    transform: scale(1.05);
+}
+
+.filtro-tiempo {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.filtro-tiempo select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    width: 150px;
+    cursor: pointer;
+}
+
+.lista-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.item-nombre {
+    font-weight: bold;
+}
+
+.item-ventas {
+    color: #5b2c6f;
+    font-size: 14px;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    padding: 15px; /* Reducir padding de la card */
+    font-size: 1rem; /* Reducir el tamaño de la fuente en toda la card */;
+}
+
+.estadisticas-lista {
+    max-height: 400px; /* Altura máxima, ajusta según el diseño */
+    overflow-y: auto;  /* Habilita el scroll vertical */
+    padding-right: 15px; /* Añadir un poco de espacio si el scroll está presente */
+}
+
+.estadisticas-lista-eliminado {
+    width: 100%;
+    max-width: 1200px; /* Máximo ancho de la lista */
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.estadisticas-lista-eliminado h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.no-items-eliminado {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+}
+
+.row-eliminado {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 500px; /* Altura máxima de la lista */
+    overflow-y: auto; /* Scroll cuando sea necesario */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.lista-item-eliminado {
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.lista-item-eliminado div {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.lista-item-eliminado strong {
+    font-weight: bold;
+}
+
+.estadisticas-btn-volver-eliminado {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #5b2c6f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.estadisticas-btn-volver-eliminado:hover {
+    background-color: #774b89;
+}
+
+/* Media Queries para pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Reducir el tamaño de los botones */
+    .estadisticas-btn {
+        width: 150px; /* Hacer los botones más pequeños */
+        height: 120px;
+        font-size: 1.1rem; /* Reducir el tamaño de la fuente */
+    }
+
+    .estadisticas-containerMini {
+        gap: 10px;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    /* Organizar los botones en dos columnas */
+    .estadisticas-containerMini {
+        flex-wrap: wrap; /* Permite que los botones se acomoden en varias filas */
+        justify-content: center; /* Centra los botones */
+    }
+
+    .estadisticas-btn {
+        width: 45%; /* Hacer los botones ocupar el 45% del ancho para estar en dos columnas */
+        height: auto;
+    }
+
+    .estadisticas-btn-volver {
+        font-size: 1rem; /* Reducir el tamaño del texto */
+        padding: 20px; /* Reducir el padding */
+    }
+}
+
+/* Media Queries para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .estadisticas-btn {
+        width: 100%; /* Hacer los botones ocupar todo el ancho en pantallas muy pequeñas */
+        height: auto;
+        font-size: 1rem; /* Reducir aún más el tamaño de la fuente */
+    }
+
+    .estadisticas-btn-volver {
+        font-size: 0.9rem; /* Reducir el tamaño del botón volver */
+        padding: 15px; /* Reducir padding */
+    }
+}

@@ -15,13 +15,12 @@ const MesaDetail = () => {
     const [pedidosBebida, setPedidosBebida] = useState([]);
     const [error, setError] = useState(null);
     const [mesas, setMesas] = useState([]);
-
     useEffect(() => {
         // Solicitar pedidos inicialmente al servidor
         fetch(`http://192.168.1.132:3000/api/pedidos/mesa/${id}`)
             .then(response => response.json())
             .then(data => {
-                setPedidos(data);
+                setPedidos(Array.isArray(data) ? data : []); // Garantiza que sea un array
             })
             .catch(err => {
                 setError(err.message || 'Error al obtener los pedidos');
@@ -52,16 +51,26 @@ const MesaDetail = () => {
                 console.error('Error obteniendo mesas:', error);
             });
 
-        // Escuchar el evento 'nuevoPedido' para pedidos nuevos
         socket.on('nuevoPedido', (nuevoPedido) => {
-            setPedidos((prevPedidos) => [...prevPedidos, nuevoPedido]);
+            setPedidos(prevPedidos => {
+                if (!Array.isArray(prevPedidos)) {
+                    console.error("El estado de pedidos no es un array:", prevPedidos);
+                    return [nuevoPedido]; // Reinicia con el nuevo pedido
+                }
+                return [...prevPedidos, nuevoPedido];
+            });
         });
+
 
         // Escuchar el evento 'nuevoPedido' para pedidos de bebida
         socket.on('nuevoPedidoBebida', (nuevoPedidoBebida) => {
-            if (nuevoPedidoBebida.mesa === parseInt(id)) {
-                setPedidosBebida((prevPedidosBebida) => [...prevPedidosBebida, nuevoPedidoBebida]);
-            }
+            setPedidosBebida((prevPedidosBebida) => {
+                if (!Array.isArray(prevPedidosBebida)) {
+                    console.error("El estado de pedidosBebida no es un array:", prevPedidosBebida);
+                    return [nuevoPedidoBebida]; // Reinicia con el nuevo pedido
+                }
+                return [...prevPedidosBebida, nuevoPedidoBebida];
+            });
         });
 
         // Escuchar el evento 'mesaRecuperada' emitido desde el servidor
@@ -83,7 +92,6 @@ const MesaDetail = () => {
         return mesa ? mesa.numero : 'Desconocido';
     };
 
-
     // Configurar el socket para escuchar los nuevos pedidos
     useEffect(() => {
         socket.on('actualizarPedidos', (nuevoPedido) => {
@@ -96,119 +104,119 @@ const MesaDetail = () => {
         };
     }, []);
 
-    // Función para eliminar un plato
     const eliminarPlato = (pedidoId, platoId) => {
-        // Realizando la solicitud DELETE
+        // Obtener el token JWT del localStorage
+        const token = localStorage.getItem('token');
+
+        console.log("Token enviado en la solicitud:", token);  // Verifica que el token sea válido
+
+        if (!token) {
+            console.error("No se encontró el token, el usuario no está autenticado.");
+            return;
+        }
+
+        // Realizar la solicitud PUT para eliminar un plato
         fetch(`http://192.168.1.132:3000/api/pedidos/${pedidoId}/actualizar-plato/${platoId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Agregar el token al encabezado de la solicitud
             },
-            body: JSON.stringify({ cantidad: 1 }) // Le indicamos al backend que queremos restar 1
+            body: JSON.stringify({ cantidad: 1 }) // Eliminar 1 de la cantidad
         })
-            .then(response => {
-                console.log('Respuesta del fetch:', response); // Esto te ayudará a ver la respuesta completa
-                return response.json();
-            })
+            .then(response => response.json()) // Esperar la respuesta como JSON
             .then(data => {
-                setPedidos(prevPedidos =>
-                    prevPedidos.map(pedido => {
-                        if (pedido._id === pedidoId) {
-                            const updatedPlatos = pedido.platos.map(plato => {
-                                if (plato._id === platoId) {
-                                    // Si la cantidad es mayor a 1, restamos 1
-                                    if (plato.cantidad > 1) {
-                                        return {
-                                            ...plato,
-                                            cantidad: plato.cantidad - 1, // Reducir la cantidad
-                                            tipo: plato.tipo,
-                                        };
-                                    } else {
-                                        // Si la cantidad es 1, la eliminamos
-                                        return null;
+                if (data.error) {
+                    console.error('Error al actualizar el plato:', data.error);
+                } else {
+                    console.log('Plato eliminado:', data);
+                    // Actualizar el estado de los pedidos
+                    setPedidos(prevPedidos =>
+                        prevPedidos.map(pedido => {
+                            if (pedido._id === pedidoId) {
+                                const updatedPlatos = pedido.platos.map(plato => {
+                                    if (plato._id === platoId) {
+                                        if (plato.cantidad > 1) {
+                                            return { ...plato, cantidad: plato.cantidad - 1 };
+                                        } else {
+                                            return null; // Si la cantidad es 1, eliminamos el plato
+                                        }
                                     }
+                                    return plato;
+                                }).filter(plato => plato !== null);
+
+                                if (updatedPlatos.length === 0) {
+                                    return null; // Eliminar el pedido si no quedan platos
                                 }
-                                return plato;
-                            }).filter(plato => plato !== null); // Filtrar los platos eliminados
 
-                            // Eliminar el pedido si no tiene platos ni bebidas
-                            if (updatedPlatos.length === 0) {
-                                return null; // Eliminar el pedido
+                                return { ...pedido, platos: updatedPlatos };
                             }
-
-                            return {
-                                ...pedido,
-                                platos: updatedPlatos,  // Actualizamos la lista de platos
-                            };
-                        }
-                        return pedido;
-                    }).filter(pedido => pedido !== null) // Eliminar pedidos vacíos
-                );
-
-                // Recargar la página después de actualizar los pedidos
-                window.location.reload();
+                            return pedido;
+                        }).filter(pedido => pedido !== null) // Filtrar pedidos vacíos
+                    );
+                }
             })
             .catch(err => {
+                console.error('Error al eliminar el plato:', err);
                 setError(err.message || 'Error al actualizar el plato');
             });
     };
 
 
     const eliminarBebida = (pedidoId, bebidaId) => {
+        // Obtener el token JWT del localStorage
+        const token = localStorage.getItem('token');
+
+        console.log("Token enviado en la solicitud:", token);  // Verifica que el token sea válido
+
+        if (!token) {
+            console.error("No se encontró el token, el usuario no está autenticado.");
+            return;
+        }
+
         // Hacer una solicitud PUT para actualizar la cantidad de la bebida
         fetch(`http://192.168.1.132:3000/api/pedidoBebidas/${pedidoId}/actualizar-bebida/${bebidaId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify({ cantidad: 1 }) // Le indicamos al backend que queremos restar 1
+            body: JSON.stringify({ cantidad: 1 })
         })
             .then(response => response.json())
             .then(data => {
+                console.log('Respuesta de eliminar bebida:', data);  // Verifica la respuesta del servidor
                 setPedidosBebida(prevPedidosBebida =>
                     prevPedidosBebida.map(pedido => {
                         if (pedido._id === pedidoId) {
-                            // Encontrar la bebida en el pedido
                             const updatedBebidas = pedido.bebidas.map(bebida => {
                                 if (bebida._id === bebidaId) {
-                                    // Si la cantidad es mayor a 1, restamos 1
                                     if (bebida.cantidad > 1) {
-                                        return {
-                                            ...bebida,
-                                            cantidad: bebida.cantidad - 1, // Reducir la cantidad
-                                        };
+                                        bebida.cantidad -= 1;
+                                        return bebida;
                                     } else {
-                                        // Si la cantidad es 1, la eliminamos
                                         return null;
                                     }
                                 }
                                 return bebida;
-                            }).filter(bebida => bebida !== null); // Filtrar las bebidas eliminadas
+                            }).filter(bebida => bebida !== null);
 
-                            // Eliminar el pedido si no tiene platos ni bebidas
                             if (updatedBebidas.length === 0) {
-                                return null; // Eliminar el pedido
+                                return null;
                             }
 
-                            return {
-                                ...pedido,
-                                bebidas: updatedBebidas,  // Actualizamos la lista de bebidas
-                            };
+                            return { ...pedido, bebidas: updatedBebidas };
                         }
                         return pedido;
-                    }).filter(pedido => pedido !== null) // Eliminar pedidos vacíos
+                    }).filter(pedido => pedido !== null)
                 );
-
-                // Recargar la página después de actualizar los pedidos
-                window.location.reload();
             })
             .catch(err => {
+                console.error('Error al eliminar la bebida:', err);
                 setError(err.message || 'Error al actualizar la bebida');
             });
+
     };
-
-
-
 
     return (
         <div className="container-fluid text-center mt-3">

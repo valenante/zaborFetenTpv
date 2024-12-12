@@ -7,19 +7,14 @@
     background: #512e5f;
 }
 
-.bebidas-container{
+/* Bebidas */
+.bebidas-container {
     display: grid;
     margin: auto;
-    grid-template-columns: repeat(6, 1fr); /* 8 columnas por fila */
+    grid-template-columns: repeat(6, 1fr); /* 6 columnas por fila */
     gap: 10px; /* Espaciado entre las cajas */
     justify-items: center; /* Centra los elementos dentro de cada caja */
     align-items: center;
-}
-
-/* Categorías */
-.categorias-wrapper {
-    text-align: center;
-    
 }
 
 .bebida-card {
@@ -73,7 +68,7 @@
 
 /* Estilos generales para los formularios de bebidas */
 
-.formulario-bebida{
+.formulario-bebida {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -83,7 +78,7 @@
     padding: 20px;
 }
 
-.formulario-bebida h2{
+.formulario-bebida h2 {
     text-align: center;
     margin-bottom: 20px;
     color: #333;
@@ -95,12 +90,12 @@
     flex-direction: column;
 }
 
-.formulario-bebida label{
+.formulario-bebida label {
     font-size: 16px;
     color: #555;
 }
 
-.form-control{
+.form-control {
     max-width: 200px;
     max-height: 200px;
 }
@@ -118,7 +113,7 @@
 
 /* Estilos adicionales para inputs con errores */
 .formulario-bebida input:invalid,
-.formulario-bebida textarea:invalid{
+.formulario-bebida textarea:invalid {
     border-color: #dc3545;
 }
 
@@ -128,4 +123,104 @@
     font-size: 14px;
     margin-top: -10px;
     margin-bottom: 15px;
+}
+
+/* Estilos para pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Ajuste para bebidas */
+    .bebidas-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas para bebidas */
+        gap: 15px;
+    }
+
+    .bebida-card {
+        padding: 20px;
+        width: 200px;
+        height: 170px;
+    }
+
+    .bebida-card h4 {
+        font-size: 1.1rem;
+    }
+
+    .editar-button {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .bebida-card button.eliminar-button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    /* Ajustes para formularios */
+    .formulario-bebida {
+        padding: 15px;
+        max-width: 500px;
+    }
+
+    .formulario-bebida h2 {
+        font-size: 22px;
+    }
+
+    .formulario-bebida input,
+    .formulario-bebida textarea {
+        font-size: 14px;
+    }
+
+    .formulario-bebida label {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .categorias-container{
+        max-height: 30rem;
+        overflow: auto;
+    }
+
+    .bebidas-wrapper {
+        max-height: 30rem;
+        overflow: auto;
+    }
+
+    /* Ajuste para bebidas */
+    .bebida-card {
+        padding: 15px;
+        width: 160px;
+        height: 150px;
+    }
+
+    .bebida-card h4 {
+        font-size: 1rem;
+    }
+
+    .editar-button {
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+
+    .bebida-card button.eliminar-button {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+
+    /* Ajustes para formularios */
+    .formulario-bebida {
+        padding: 10px;
+        max-width: 400px;
+    }
+
+    .formulario-bebida h2 {
+        font-size: 20px;
+    }
+
+    .formulario-bebida input,
+    .formulario-bebida textarea {
+        font-size: 12px;
+    }
+
+    .formulario-bebida label {
+        font-size: 12px;
+    }
 }

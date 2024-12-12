@@ -15,6 +15,7 @@ const Platos = () => {
     const [platoSeleccionado, setPlatoSeleccionado] = useState(null); // Plato activo
     const [modalAbierto, setModalAbierto] = useState(false); // Estado del modal
     const [mostrarModal, setMostrarModalPlatoNuevo] = useState(false); // Estado del modal para nuevo plato
+    const [mostrarContenido, setMostrarContenido] = useState(false); // Nuevo estado para controlar la visibilidad del contenido
 
     // Cargar los platos al cargar el componente
     useEffect(() => {
@@ -52,20 +53,28 @@ const Platos = () => {
     const abrirModalPlatoNuevo = () => setMostrarModalPlatoNuevo(true);
     const cerrarModalPlatoNuevo = () => setMostrarModalPlatoNuevo(false);
 
+    // Función para mostrar el contenido cuando se seleccione una categoría o se abra un modal
+    const mostrarContenidoPlatos = () => {
+        setMostrarContenido(true);
+    };
 
     return (
         <>
             <Navbar />
             <SubNavbar />
             <div className="platos-contenedor">
-                {!categoriaSeleccionada ? (
+                {/* Muestra solo los botones de categorías inicialmente */}
+                {!mostrarContenido ? (
                     <div className="categorias-wrapper">
                         <div className="categorias-container">
                             {categorias.map((categoria, index) => (
                                 <div
                                     key={index}
                                     className="categoria-box"
-                                    onClick={() => setCategoriaSeleccionada(categoria)}
+                                    onClick={() => {
+                                        setCategoriaSeleccionada(categoria);
+                                        mostrarContenidoPlatos(); // Mostrar contenido después de seleccionar categoría
+                                    }}
                                 >
                                     <span className="categoria-text">{categoria}</span>
                                 </div>
@@ -97,13 +106,12 @@ const Platos = () => {
                                     },
                                 }}
                             >
-                            <FormularioNuevoPlato
-                                cerrarModal={cerrarModalPlatoNuevo}
-                                setPlatos={setPlatos}
-                            />
+                                <FormularioNuevoPlato
+                                    cerrarModal={cerrarModalPlatoNuevo}
+                                    setPlatos={setPlatos}
+                                />
                             </Modal>
-                            )}
-                            
+                        )}
                     </div>
                 ) : (
                     <div className="platos-wrapper">
@@ -122,12 +130,14 @@ const Platos = () => {
                         </div>
                         <button
                             className="volver-button"
-                            onClick={() => setCategoriaSeleccionada(null)}
+                            onClick={() => {
+                                setCategoriaSeleccionada(null);
+                                setMostrarContenido(false); // Volver a los botones de categorías
+                            }}
                         >
                             Volver a Categorías
                         </button>
                     </div>
-
                 )}
 
                 {/* Modal para editar plato */}

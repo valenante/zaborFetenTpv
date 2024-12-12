@@ -8,12 +8,12 @@ import { Checkbox, FormControlLabel, MenuItem, Select } from '@mui/material';
 const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => {
     const [cantidad, setCantidad] = useState(1);
     const [conHielo, setConHielo] = useState(false);
-    const [acompañante, setAcompañante] = useState('');
     const [bebidas, setBebidas] = useState(bebida);
     const { numeroMesa } = useParams();
     const [refresco, setRefresco] = useState({ refrescoSeleccionado: '', tomarSolo: false });
     const [refrescos, setRefrescos] = useState([]);  // Estado para almacenar los refrescos disponibles
 
+    const { id } = useParams();
 
     useEffect(() => {
         axios.get('http://192.168.1.132:3000/api/bebidas')
@@ -26,41 +26,41 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
     }, []);
 
     // Cargar refrescos desde la base de datos
-  useEffect(() => {
-    const fetchRefrescos = async () => {
-      try {
-        const response = await fetch('http://192.168.1.132:3000/api/bebidas?categoria=refresco');
-        const data = await response.json();
-        setRefrescos(data);  // Asumiendo que la respuesta es un arreglo de refrescos
-      } catch (error) {
-        console.error("Error al obtener refrescos:", error);
-      }
-    };
+    useEffect(() => {
+        const fetchRefrescos = async () => {
+            try {
+                const response = await fetch('http://192.168.1.132:3000/api/bebidas?categoria=refresco');
+                const data = await response.json();
+                setRefrescos(data);  // Asumiendo que la respuesta es un arreglo de refrescos
+            } catch (error) {
+                console.error("Error al obtener refrescos:", error);
+            }
+        };
 
-    fetchRefrescos();
-  }, []);
+        fetchRefrescos();
+    }, []);
 
     const handleTomarSoloChange = (event) => {
         setRefresco({ ...refresco, tomarSolo: event.target.checked, refrescoSeleccionado: '' }); // Si toma solo, vacía el refresco
-      };
+    };
 
     const handleRefrescoChange = (event) => {
         setRefresco({ ...refresco, refrescoSeleccionado: event.target.value, tomarSolo: false }); // Actualiza el refresco
-      };
-    
+    };
+
 
     // Función para crear el pedido
     const handlePedir = async () => {
-        let precioTotal = bebidas[0].precio * cantidad; // Precio base por la cantidad
+        let precioTotal = bebida.precio * cantidad; // Precio base por la cantidad
 
         // Verifica si el precio total es un número
         if (isNaN(precioTotal) || precioTotal <= 0) {
-            alert('El precio total no es aaaaaaaaaaaaaaválido');
+            alert('El precio total no es válido');
             return;
         }
 
         const pedidoData = {
-            mesa: numeroMesa,
+            mesa: id,
             bebidas: [
                 {
                     bebidaId: bebida._id,
@@ -68,7 +68,7 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
                     cantidad,
                     precio: bebida.precio,
                     categoria: bebida.categoria,
-                    acompañante: refresco.tomarSolo ? 'Solo' : refresco.refrescoSeleccionado,  // Si toma solo, no asigna refresco
+                    acompañante: refresco.tomarSolo ? 'Solo' : refresco.refrescoSeleccionado, // Si toma solo, no asigna refresco
                 },
             ],
             total: precioTotal, // Asegúrate de que el total sea un número válido
@@ -76,6 +76,7 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
         };
 
         try {
+            // Crear el pedido
             const response = await fetch('http://192.168.1.132:3000/api/pedidoBebidas', {
                 method: 'POST',
                 headers: {
@@ -87,6 +88,30 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
 
             if (response.ok) {
                 alert(`Pedido creado con éxito! ID: ${data.pedidoId}`);
+
+                // Incrementar las ventas de la bebida
+                try {
+                    const incrementarResponse = await fetch(
+                        `http://192.168.1.132:3000/api/bebidas/${bebida._id}/incrementar-ventas`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ cantidad }), // Incrementa en base a la cantidad pedida
+                        }
+                    );
+
+                    const incrementarData = await incrementarResponse.json();
+                    if (incrementarResponse.ok) {
+                        console.log('Ventas de la bebida incrementadas:', incrementarData.message);
+                    } else {
+                        console.error('Error al incrementar las ventas:', incrementarData.error);
+                    }
+                } catch (error) {
+                    console.error('Error al realizar el incremento de ventas:', error);
+                }
+
                 handleCloseModal(); // Cierra el modal al crear el pedido
             } else {
                 alert('Error al crear el pedido: ' + data.error);
@@ -96,6 +121,7 @@ const BebidaModal = ({ isModalOpen, handleCloseModal, bebida, onAddBebida }) => 
             alert('Hubo un error al realizar el pedido.');
         }
     };
+
 
     return (
         <Dialog open={isModalOpen} onClose={handleCloseModal}>

@@ -1,0 +1,82 @@
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 576px) {
+    #pedidos-center{
+        width: 100%;
+    }
+
+    .mesa-title-small {
+        font-size: 1.2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .mesa-detail-container-small {
+        padding: 10px;
+    }
+
+    .pedido-card-small {
+        width: 100%;
+        background-color: white;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .pedido-status-small {
+        font-size: 1rem;
+    }
+
+    .plato-name-small {
+        font-size: 0.9rem;
+    }
+
+    .btn-small {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        background-color: rgb(140, 12, 12);
+        color: white;
+        border-radius: 10px;
+    }
+
+
+    .list-group-item-small {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .mesa-error-small {
+        font-size: 0.9rem;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 375px) {
+    .mesa-title-small {
+        font-size: 1rem;
+    }
+
+    .pedido-card-small {
+        padding: 8px;
+    }
+
+    .pedido-status-small {
+        font-size: 0.9rem;
+    }
+
+    .plato-name-small {
+        font-size: 0.8rem;
+    }
+
+    .btn-small {
+        font-size: 0.7rem;
+        padding: 6px 8px;
+    }
+
+    .list-group-item-small {
+        font-size: 0.8rem;
+    }
+
+    .mesa-error-small {
+        font-size: 0.8rem;
+    }
+}

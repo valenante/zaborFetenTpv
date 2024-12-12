@@ -21,7 +21,7 @@ const Cocina = () => {
                 .catch((error) => {
                     console.error('Error obteniendo pedidos:', error);
                 });
-       });
+        });
 
         socket.on('estadoPedidoActualizado', (pedidoActualizado) => {
             setPedidos((prevPedidos) =>
@@ -90,8 +90,8 @@ const Cocina = () => {
             });
     }, []);
 
-      // Función para obtener el número de la mesa basado en el id
-      const obtenerNumeroMesa = (mesaId) => {
+    // Función para obtener el número de la mesa basado en el id
+    const obtenerNumeroMesa = (mesaId) => {
         const mesa = mesas.find((mesa) => mesa._id === mesaId);
         return mesa ? mesa.numero : 'Desconocido';
     };
@@ -230,10 +230,10 @@ const Cocina = () => {
                                     <div key={pedido._id} className="col-12 col-md-6 col-lg-3 col-xl-2 cocina-pedido">
                                         <div className="list-group-item" style={{ height: 'fit-content' }}>
                                             <h5 className="cocina-time">
-                                            Mesa {obtenerNumeroMesa(pedido.mesa)} - {new Date(pedido.createdAt).toLocaleTimeString('es-ES', {
+                                                Mesa {obtenerNumeroMesa(pedido.mesa)} - {new Date(pedido.createdAt).toLocaleTimeString('es-ES', {
                                                     hour: '2-digit',
                                                     minute: '2-digit',
-                                                })} 
+                                                })}
                                             </h5>
                                             <p className="cocina-mesa"></p>
 
@@ -263,11 +263,36 @@ const Cocina = () => {
 
                                                         </p>
 
+                                                        {plato.croquetas.length > 0 && (
+                                                            <p className="cocina-ingredientes">
+                                                                {
+                                                                    // Agrupar los sabores y contar las repeticiones
+                                                                    Object.entries(
+                                                                        plato.croquetas.reduce((acc, sabor) => {
+                                                                            acc[sabor] = (acc[sabor] || 0) + 1;
+                                                                            return acc;
+                                                                        }, {})
+                                                                    ).map(([sabor, cantidad], index) => {
+                                                                        // Mostrar el sabor y la cantidad si es mayor a 1
+                                                                        return `${sabor}${cantidad > 1 ? ` x${cantidad}` : ''}` + (index < plato.croquetas.length - 1 ? ', ' : '');
+                                                                    })
+                                                                }
+                                                            </p>
+                                                        )}
+
                                                         {plato.ingredientesEliminados.length > 0 && (
                                                             <p className="cocina-ingredientes">
                                                                 Sin {plato.ingredientesEliminados.join(', ')}
                                                             </p>
                                                         )}
+
+                                                        {(plato.nombre === 'Croquetas' || plato.nombre === 'Surtido de Croquetas') &&
+                                                            plato.ingredientes && plato.ingredientes.length > 0 && (
+                                                                <p className="cocina-ingredientes">
+                                                                    Ingredientes: {plato.ingredientes.join(', ')}
+                                                                </p>
+                                                            )}
+
 
                                                         {plato.opcionesPersonalizables && (
                                                             <ul className="cocina-opciones">
@@ -308,13 +333,31 @@ const Cocina = () => {
 
             {mostrarTerminados && (
                 <div>
-                    <h3 className="cocina-subtitle">Pedidos Terminados</h3>
-                    {pedidos.filter((pedido) => pedido.estado === 'completado').length === 0 ? (
-                        <p className="cocina-empty">No hay pedidos terminados.</p>
+                    <h3 className="cocina-subtitle">Pedidos Terminados (Últimos 20 minutos)</h3>
+                    {pedidos.filter((pedido) => {
+                        if (pedido.estado !== 'completado') return false;
+
+                        // Calcula la diferencia de tiempo en minutos
+                        const tiempoActual = new Date();
+                        const tiempoCreacion = new Date(pedido.createdAt);
+                        const diferenciaMinutos = (tiempoActual - tiempoCreacion) / (1000 * 60); // Diferencia en minutos
+
+                        return diferenciaMinutos <= 20; // Solo incluir si la diferencia es <= 20 minutos
+                    }).length === 0 ? (
+                        <p className="cocina-empty">No hay pedidos terminados en los últimos 20 minutos.</p>
                     ) : (
                         <div className="row cocina-list">
                             {pedidos
-                                .filter((pedido) => pedido.estado === 'completado')
+                                .filter((pedido) => {
+                                    if (pedido.estado !== 'completado') return false;
+
+                                    // Calcula la diferencia de tiempo en minutos
+                                    const tiempoActual = new Date();
+                                    const tiempoCreacion = new Date(pedido.createdAt);
+                                    const diferenciaMinutos = (tiempoActual - tiempoCreacion) / (1000 * 60); // Diferencia en minutos
+
+                                    return diferenciaMinutos <= 20; // Solo incluir si la diferencia es <= 20 minutos
+                                })
                                 .map((pedido) => (
                                     <div key={pedido._id} className="col-12 col-md-6 col-lg-4 col-xl-2 cocina-pedido">
                                         <div className="list-group-item w-100" style={{ height: 'fit-content' }}>
@@ -324,8 +367,12 @@ const Cocina = () => {
                                                     minute: '2-digit',
                                                 })}
                                             </h5>
-                                            <p className="cocina-mesa">Mesa: {pedido.mesa}</p>
-
+                                            <h5 className="cocina-time">
+                                                Mesa {obtenerNumeroMesa(pedido.mesa)} - {new Date(pedido.createdAt).toLocaleTimeString('es-ES', {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                })}
+                                            </h5>
                                             {pedido.comensales && (
                                                 <p className="cocina-comensales">Comensales: {pedido.comensales}</p>
                                             )}
@@ -340,7 +387,7 @@ const Cocina = () => {
                                                 <div
                                                     key={index}
                                                     style={{
-                                                        backgroundColor: plato.tipoServicio === 'compartir' ? 'purple' : 'red',
+                                                        color: plato.tipoServicio === 'compartir' ? '#774b89' : 'rgb(140,12,12)',
                                                     }}
                                                 >
                                                     <p className="cocina-plato">

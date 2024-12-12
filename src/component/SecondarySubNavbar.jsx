@@ -12,6 +12,7 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -67,6 +68,10 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
         navigate('/');
     };
 
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
     const handleSetPassword = async () => {
         try {
             const response = await fetch('http://192.168.1.132:3000/api/auth/setPassword', {
@@ -118,14 +123,19 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
 
     return (
         <div>
-            <div className="secondary-subnavbar">
-                <button className="btn" onClick={onTransferirMesas}>
+            {/* Menú hamburguesa */}
+            <div className={`hamburger-menu ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
+                <div className="hamburger-icon"></div>
+            </div>
+
+            <div className={`secondary-subnavbar ${isMenuOpen ? 'open' : ''}`}>
+            <button className="btn" onClick={onTransferirMesas}>
                     Transferir Mesas
                 </button>
                 <button className="btn" onClick={() => setIsModalOpen(true)}>
                     Recuperar Mesas
                 </button>
-                <button className="btn" onClick={onEstadisticas}>
+                <button className="btn" onClick={() => navigate('/estadisticas')}>
                     Estadísticas
                 </button>
                 <button className="btn" onClick={handleUsuariosRedirect}>
@@ -167,7 +177,6 @@ const SecondarySubNavbar = ({ onTransferirMesas, onEstadisticas }) => {
                     </div>
                 </div>
             )}
-
 
             {/* Modal superpuesto para recuperar mesas */}
             {isModalOpen && (

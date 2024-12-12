@@ -14,6 +14,7 @@ const BottomBar = () => {
     const [tarjeta, setTarjeta] = useState(""); // Cantidad en tarjeta
     const [validationError, setValidationError] = useState(""); // Errores de validación en el modal
     const [total, setTotal] = useState(""); // Total a pagar
+    console.log(total);
 
     useEffect(() => {
         // Obtener el total de la mesa desde el backend

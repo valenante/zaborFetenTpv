@@ -1,0 +1,82 @@
+/* CajaDiaria.css */
+
+/* Estilo global para el contenedor */
+.parent-container {
+    display: flex;
+    justify-content: center;  /* Centra horizontalmente */
+    align-items: center;      /* Centra verticalmente */
+    min-height: 100vh;         /* Ocupa toda la altura de la pantalla */
+  }
+  
+  /* Contenedor principal de la caja diaria */
+  .caja-diaria-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 30px;
+    width: 80%; /* Controla el tamaño del contenedor */
+    max-width: 800px; /* Limita el ancho máximo */
+  }
+  
+  /* Centrado del contenido dentro del contenedor */
+  .centered {
+    text-align: center;
+  }
+  
+  /* Estilo para el título */
+ .caja-diaria-container h2 {
+    font-size: 1.8rem;
+    color: #000000;
+    margin-bottom: 20px;
+  }
+  
+  /* Estilo para el gráfico */
+  .chart-wrapper {
+    position: relative;
+    height: 400px; /* Ajusta la altura del gráfico */
+    width: 100%;
+  }
+  
+  /* Resaltar mensaje de carga */
+  .caja-diaria-container p {
+    font-size: 1.2rem;
+    color: #000000;
+  }
+  
+  /* Estilo para el mensaje de error */
+  p.error {
+    color: red;
+    font-weight: bold;
+  }
+  
+  /* Estilo para el botón de descarga */
+.descarga-grafico {
+    background-color: #6C3483; /* Fondo verde */
+    color: white;               /* Color de texto blanco */
+    border: none;               /* Sin borde */
+    padding: 12px 20px;         /* Espaciado interno */
+    font-size: 16px;            /* Tamaño de la fuente */
+    font-weight: bold;          /* Texto en negrita */
+    border-radius: 8px;         /* Bordes redondeados */
+    cursor: pointer;           /* Cambia el cursor al pasar por encima */
+    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+  }
+  
+  /* Estilo al pasar el ratón */
+  .descarga-grafico:hover {
+    background-color: #5f2675;  /* Fondo más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de elevación */
+  }
+  
+  /* Estilo al hacer clic en el botón */
+  .descarga-grafico:active {
+    background-color: #5f2675; /* Fondo aún más oscuro al hacer clic */
+    transform: translateY(2px); /* Efecto de presión al hacer clic */
+  }
+  
+  /* Estilo para el foco (cuando el botón es seleccionado) */
+  .descarga-grafico:focus {
+    outline: none;              /* Eliminar el borde de foco por defecto */
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.5); /* Sombra verde */
+  }
+  

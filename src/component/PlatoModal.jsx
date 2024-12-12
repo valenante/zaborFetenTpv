@@ -139,15 +139,39 @@ const PlatoModal = ({ isModalOpen, handleCloseModal, plato }) => {
   
       if (response.ok) {
         alert(`Pedido creado con éxito! ID: ${data.pedidoId}`);
+
+        // Incrementar las ventas de la bebida
+        try {
+            const incrementarResponse = await fetch(
+                `http://192.168.1.132:3000/api/platos/${plato._id}/incrementar-ventas`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cantidad }), // Incrementa en base a la cantidad pedida
+                }
+            );
+
+            const incrementarData = await incrementarResponse.json();
+            if (incrementarResponse.ok) {
+                console.log('Ventas de los platos incrementadas:', incrementarData.message);
+            } else {
+                console.error('Error al incrementar las ventas:', incrementarData.error);
+            }
+        } catch (error) {
+            console.error('Error al realizar el incremento de ventas:', error);
+        }
+
         handleCloseModal(); // Cierra el modal al crear el pedido
-      } else {
+    } else {
         alert('Error al crear el pedido: ' + data.error);
-      }
-    } catch (error) {
-      console.error('Error al realizar el pedido:', error);
-      alert('Hubo un error al realizar el pedido.');
     }
-  };
+} catch (error) {
+    console.error('Error al realizar el pedido:', error);
+    alert('Hubo un error al realizar el pedido.');
+}
+};
   
   
 

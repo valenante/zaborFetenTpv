@@ -37,3 +37,9 @@
     font-size: 22px;
     transition: color 0.3s ease;
 }
+
+@media (max-width: 600px) {
+    .nav-links li a {
+        font-size: 18px;
+    }
+}

@@ -64,7 +64,7 @@ const Barra = () => {
         return () => {
             socket.disconnect();
         };
-    }, []); 
+    }, []);
 
     useEffect(() => {
         // Obtener todos los pedidos de bebidas al cargar el componente
@@ -228,7 +228,7 @@ const Barra = () => {
                                             <ul className="barra-items">
                                                 {pedidoBebida.bebidas.map((bebida) => (
                                                     <li key={bebida._id} className="barra-item mb-3">
-                                                        {bebida.nombre} x{bebida.cantidad} 
+                                                        {bebida.nombre} x{bebida.cantidad}
                                                         <input
                                                             type="checkbox"
                                                             checked={bebida.estadoPreparacion === 'listo'}
@@ -252,16 +252,33 @@ const Barra = () => {
                 </div>
             )}
 
-            {/* Mostrar pedidos terminados */}
             {mostrarTerminados && (
                 <div>
-                    <h3 className="barra-subtitle">Pedidos Terminados</h3>
-                    {pedidosBebidas.filter((pedidoBebida) => pedidoBebida.estado === 'completado').length === 0 ? (
-                        <p className="barra-empty">No hay pedidos terminados.</p>
+                    <h3 className="barra-subtitle">Pedidos Terminados (Últimos 10 minutos)</h3>
+                    {pedidosBebidas.filter((pedidoBebida) => {
+                        if (pedidoBebida.estado !== 'completado') return false;
+
+                        // Calcula la diferencia de tiempo en minutos
+                        const tiempoActual = new Date();
+                        const tiempoCreacion = new Date(pedidoBebida.createdAt);
+                        const diferenciaMinutos = (tiempoActual - tiempoCreacion) / (1000 * 60); // Diferencia en minutos
+
+                        return diferenciaMinutos <= 10; // Solo incluir si la diferencia es <= 10 minutos
+                    }).length === 0 ? (
+                        <p className="barra-empty">No hay pedidos terminados en los últimos 10 minutos.</p>
                     ) : (
                         <div className="row barra-list">
                             {pedidosBebidas
-                                .filter((pedidoBebida) => pedidoBebida.estado === 'completado')
+                                .filter((pedidoBebida) => {
+                                    if (pedidoBebida.estado !== 'completado') return false;
+
+                                    // Calcula la diferencia de tiempo en minutos
+                                    const tiempoActual = new Date();
+                                    const tiempoCreacion = new Date(pedidoBebida.createdAt);
+                                    const diferenciaMinutos = (tiempoActual - tiempoCreacion) / (1000 * 60); // Diferencia en minutos
+
+                                    return diferenciaMinutos <= 10; // Solo incluir si la diferencia es <= 10 minutos
+                                })
                                 .map((pedidoBebida) => (
                                     <div key={pedidoBebida._id} className="col-12 col-md-6 col-lg-3 col-xl-2 barra-pedido">
                                         <div className="list-group-item">

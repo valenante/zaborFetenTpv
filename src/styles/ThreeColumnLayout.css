@@ -1,0 +1,27 @@
+/* Tres columnas con fondo de color diferente */
+
+.left-col {
+    background-color: lightblue;
+    padding: 20px;
+    height: 100vh; /* Para que ocupe toda la altura de la pantalla */
+}
+
+.center-col {
+    background-color: lightgreen;
+    padding: 20px;
+    height: 100vh;
+}
+
+.right-col {
+    background-color: lightcoral;
+    padding: 20px;
+    height: 100vh;
+}
+
+/* Asegúrate de que las columnas se alineen bien en pantallas más pequeñas */
+@media (max-width: 768px) {
+    .left-col, .center-col, .right-col {
+        padding: 10px;
+        height: auto; /* Se ajusta al contenido en pantallas pequeñas */
+    }
+}

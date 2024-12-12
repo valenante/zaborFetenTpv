@@ -16,7 +16,7 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
         tipo: 'plato',
     });
 
-    const handleChange = (e) => {
+    const handleChange = (e, index, tipo) => {
         const { name, value } = e.target;
         if (name.startsWith('precios.')) {
             const key = name.split('.')[1];
@@ -25,16 +25,17 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
                 precios: { ...prev.precios, [key]: value },
             }));
         } else if (name === 'ingredientes') {
-            setFormData({ ...formData, ingredientes: value.split(',') }); // Se asume que los ingredientes están separados por comas
+            setFormData({ ...formData, ingredientes: value.split(',') });
         } else if (name.startsWith('opcionesPersonalizables')) {
-            const index = parseInt(name.split('.')[1]);
-            const tipo = name.split('.')[2];
-            const opciones = value.split(',');
             const newOptions = [...formData.opcionesPersonalizables];
-            newOptions[index] = { tipo, opciones };
+            if (tipo === 'tipo') {
+                newOptions[index].tipo = value; // Actualizar solo el tipo
+            } else if (tipo === 'opciones') {
+                newOptions[index].opciones = value.split(',').map((opcion) => opcion.trim()); // Convertir las opciones a un array
+            }
             setFormData({ ...formData, opcionesPersonalizables: newOptions });
         } else if (name === 'puntosDeCoccion') {
-            setFormData({ ...formData, puntosDeCoccion: value.split(',') }); // Se asume que los puntos de cocción están separados por comas
+            setFormData({ ...formData, puntosDeCoccion: value.split(',') });
         } else if (name === 'especificaciones') {
             setFormData({ ...formData, especificaciones: value.split(',') });
         } else {
@@ -42,11 +43,27 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
         }
     };
 
+    const handleChangeTipo = (e) => {
+        const selectedValue = e.target.value;
+        if (selectedValue === 'tapa-racion') {
+            setFormData({
+                ...formData,
+                tipo: ['tapa', 'racion'], // Si selecciona "Tapa y Ración", es un array con ambos tipos
+            });
+        } else {
+            setFormData({
+                ...formData,
+                tipo: selectedValue, // Si selecciona "Plato", es solo un valor simple
+            });
+        }
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const payload = new FormData();
-    
+
             // Convertir los arrays complejos a cadenas JSON antes de agregarlos a FormData
             for (const key in formData) {
                 if (formData[key] && Array.isArray(formData[key])) {
@@ -60,12 +77,12 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
 
             //Enviar imagen
             payload.append('imagen', formData.imagen);
-    
+
             const response = await fetch('http://192.168.1.132:3000/api/platos', {
                 method: 'POST',
                 body: payload,
             });
-    
+
             console.log(formData);
 
             const data = await response.json();
@@ -79,7 +96,7 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
             console.error('Error al crear el plato:', error);
         }
     };
-    
+
 
     return (
         <div className="modal">
@@ -120,7 +137,7 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
                     <div className="row">
                         <div className="col-md-6">
                             <div className="modal-form-group">
-                                <label className="modal-label">Precios (Precio):</label>
+                                <label className="modal-label">Precios (Plato Unico):</label>
                                 <input
                                     type="number"
                                     name="precios.precio"
@@ -160,7 +177,7 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
                         </div>
                         <div className="col-md-6">
                             <div className="modal-form-group">
-                                <label className="modal-label">Ingredientes (separados por comas):</label>
+                                <label className="modal-label">Ingredientes Seleccionables (separados por comas):</label>
                                 <input
                                     type="text"
                                     name="ingredientes"
@@ -182,22 +199,20 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
                                             type="text"
                                             name={`opcionesPersonalizables.${index}.tipo`}
                                             value={opcion.tipo}
-                                            onChange={(e) => handleChange(e, index, 'tipo')}
+                                            onChange={(e) => handleChange(e, index, 'tipo')} // Cambiar solo el tipo
                                             className="modal-input"
                                             placeholder="Tipo de opción (Ej: queso, acompañamiento)"
                                         />
                                         <input
                                             type="text"
                                             name={`opcionesPersonalizables.${index}.opciones`}
-                                            value={opcion.opciones.join(',')}
-                                            onChange={(e) => handleChange(e, index, 'opciones')}
+                                            value={opcion.opciones.join(',')} // Mostrar las opciones como una cadena separada por comas
+                                            onChange={(e) => handleChange(e, index, 'opciones')} // Cambiar las opciones
                                             className="modal-input"
                                             placeholder="Opciones separadas por comas"
                                         />
                                     </div>
                                 ))}
-
-
                             </div>
                         </div>
                         <div className="col-md-6">
@@ -289,18 +304,20 @@ const FormularioNuevoPlato = ({ cerrarModal, setPlatos }) => {
                                 <label className="modal-label">Tipo:</label>
                                 <select
                                     name="tipo"
-                                    value={formData.tipo}
-                                    onChange={handleChange}
+                                    value={Array.isArray(formData.tipo) ? 'tapa-racion' : formData.tipo} // Si es array, mostramos "tapa-racion"
+                                    onChange={handleChangeTipo} // Maneja el cambio
                                     className="modal-select"
                                     required
                                 >
                                     <option value="plato">Plato</option>
-                                    <option value="tapa">Tapa</option>
-                                    <option value="racion">Ración</option>
+                                    <option value="tapa-racion">Tapa y Ración</option>
                                 </select>
                             </div>
                         </div>
                     </div>
+
+
+
 
                     <div className="modal-buttons">
                         <button type="submit" className="modal-button">Crear Plato</button>

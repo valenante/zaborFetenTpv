@@ -1,4 +1,5 @@
 /* styles/Dashboard.css */
+
 .dashboard {
     font-family: Arial, sans-serif;
     background-color: #512e5f;
@@ -41,16 +42,61 @@
 
 /* Color de la mesa según el estado */
 .mesa-card.abierta {
-    background-color: rgba(204, 102, 0, 1);
-    /* Naranja para mesa abierta */
+    background-color: rgba(204, 102, 0, 1); /* Naranja para mesa abierta */
 }
 
 .mesa-card.cerrada {
-    background-color: #ffffff;
-    /* Blanco para mesa cerrada */
+    background-color: #ffffff; /* Blanco para mesa cerrada */
 }
 
 /* Añadir un efecto al pasar el ratón */
 .mesa-card:hover {
     transform: translateY(-5px);
+}
+
+.dashboard-mesa-input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* Ocupa toda la altura de la pantalla */
+    text-align: center;
+}
+
+.dashboard-mesa-input-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.dashboard-mesa-input-form {
+    width: 90%; /* Ajusta el ancho según lo necesites */
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-mesa-input {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dashboard-mesa-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dashboard-mesa-button:hover {
+    background-color: #0056b3;
 }

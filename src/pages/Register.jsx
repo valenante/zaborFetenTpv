@@ -17,7 +17,7 @@ function Register() {
       const token = localStorage.getItem('token'); // Suponiendo que guardaste el token en localStorage
 
       try {
-        const response = await fetch('http://localhost:3000/api/auth', {
+        const response = await fetch('http://192.168.1.132:3000/api/auth', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`, // Incluir el token en los encabezados
@@ -53,7 +53,7 @@ function Register() {
 
     try {
       // Realiza la llamada al backend para registrar al usuario
-      const response = await fetch('http://localhost:3000/api/auth/register', {
+      const response = await fetch('http://192.168.1.132:3000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,6 +115,7 @@ function Register() {
               >
                 <option value="waiter">Camarero</option>
                 <option value="admin">Administrador</option>
+                <option value="cocinero">Cocinero</option>
               </select>
             </div>
           )}

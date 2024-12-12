@@ -123,3 +123,13 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: #6a4b72; /* Color más oscuro al pasar el mouse */
 }
+
+@media (max-width: 768px) {
+    .modal-content {
+        max-height: 35rem;
+        overflow: auto;
+    }
+    .modal-form-row {
+        flex-direction: column;
+    }
+}
